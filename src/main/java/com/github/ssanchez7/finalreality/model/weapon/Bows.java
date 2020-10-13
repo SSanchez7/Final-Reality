@@ -1,0 +1,32 @@
+package com.github.ssanchez7.finalreality.model.weapon;
+
+/**
+ * A class that holds information of a Bow.
+ *
+ * @author Ignacio Slater Muñoz.
+ * @author Samuel Sanchez Parra.
+ */
+public class Bows extends AbstractWeapon{
+
+    /**
+     * Creates a bow with a name, a base damage and weight.
+     */
+    public Bows(String name, int damage, int weight) {
+        super(name, damage, weight, "bow");
+    }
+
+    @Override
+    public boolean equals(final Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (!(o instanceof Bows)) {
+            return false;
+        }
+        final Bows weapon = (Bows) o;
+        return getDamage() == weapon.getDamage() &&
+                getWeight() == weapon.getWeight() &&
+                getName().equals(weapon.getName());
+    }
+
+}

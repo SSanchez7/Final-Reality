@@ -2,6 +2,7 @@ package com.github.cc3002.finalreality.model.weapon;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
+import com.github.ssanchez7.finalreality.model.weapon.Weapon;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
