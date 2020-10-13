@@ -6,12 +6,12 @@ package com.github.ssanchez7.finalreality.model.weapon;
  * @author Ignacio Slater Muñoz.
  * @author Samuel Sanchez Parra.
  */
-public class Knifes extends AbstractWeapon {
+public class Knives extends AbstractWeapon {
 
     /**
      * Creates a blade with a name, a base damage and weight.
      */
-    public Knifes(String name, int damage, int weight) {
+    public Knives(String name, int damage, int weight) {
         super(name, damage, weight, "knife");
     }
 
@@ -20,10 +20,10 @@ public class Knifes extends AbstractWeapon {
         if (this == o) {
             return true;
         }
-        if (!(o instanceof Knifes)) {
+        if (!(o instanceof Knives)) {
             return false;
         }
-        final Knifes weapon = (Knifes) o;
+        final Knives weapon = (Knives) o;
         return getDamage() == weapon.getDamage() &&
                 getWeight() == weapon.getWeight() &&
                 getName().equals(weapon.getName());
