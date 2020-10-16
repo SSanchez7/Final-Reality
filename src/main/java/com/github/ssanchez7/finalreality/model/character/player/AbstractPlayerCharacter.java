@@ -14,7 +14,7 @@ import org.jetbrains.annotations.NotNull;
  * A class that holds all the information of a single character of the game.
  *
  * @author Ignacio Slater Muñoz.
- * @author <Your name>
+ * @author Samuel Sanchez Parra
  */
 public abstract class AbstractPlayerCharacter extends AbstractCharacter implements IPlayer{
 
@@ -43,11 +43,12 @@ public abstract class AbstractPlayerCharacter extends AbstractCharacter implemen
   }
 
   @Override
+  public abstract void equip(IWeapon weapon);
+
+  @Override
   public IWeapon getEquippedWeapon() {
     return equippedWeapon;
   }
-
-  public abstract void equip(IWeapon weapon);
 
   @Override
   public String getCharacterClass() {
@@ -62,7 +63,7 @@ public abstract class AbstractPlayerCharacter extends AbstractCharacter implemen
 
   @Override
   public int hashCode() {
-    return Objects.hash(getCharacterClass());
+    return Objects.hash(getCharacterClass(), getName(), getDefense());
   }
 
 }

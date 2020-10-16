@@ -15,11 +15,6 @@ public interface IPlayer {
     String getCharacterClass();
 
     /**
-     * wait Turn
-     */
-    void waitTurn();
-
-    /**
      * Equip the character's weapon
      */
     void equip(IWeapon weapon);

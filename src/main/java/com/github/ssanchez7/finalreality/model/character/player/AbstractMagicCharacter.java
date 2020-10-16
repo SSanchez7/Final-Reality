@@ -15,4 +15,12 @@ public abstract class AbstractMagicCharacter extends AbstractPlayerCharacter {
         super(name, turnsQueue, characterClass, hp, defense);
         this.mana = mana;
     }
+
+    int getMana(){
+        return this.mana;
+    }
+
+    void setMana(int mana){
+        this.mana = mana;
+    }
 }
