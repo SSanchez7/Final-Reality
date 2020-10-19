@@ -15,18 +15,30 @@ import org.jetbrains.annotations.NotNull;
 public class Enemy extends AbstractCharacter {
 
   private final int weight;
-  private int attack;
+  private final int attackPoints;
 
   /**
-   * Creates a new enemy with a name, a weight and the queue with the characters ready to
-   * play.
+   * Creates a new enemy.
+   *
+   * @param name
+   *    Enemy's name
+   * @param turnsQueue
+   *    Queue with the characters ready to play
+   * @param hpMax
+   *    Enemy's initial health points
+   * @param defensePoints
+   *    Enemy's defense points
+   * @param attackPoints
+   *    Enemy's attack points
+   * @param weight
+   *    Enemy's weight for an attack
    */
   public Enemy(@NotNull final String name,
                @NotNull final BlockingQueue<ICharacter> turnsQueue,
-               int hp, int defense, int attack, int weight) {
-    super(name, turnsQueue, hp, defense);
+               int hpMax, int defensePoints, int attackPoints, int weight) {
+    super(name, turnsQueue, hpMax, defensePoints);
     this.weight = weight;
-    this.attack = attack;
+    this.attackPoints = attackPoints;
   }
 
   /**
@@ -39,7 +51,7 @@ public class Enemy extends AbstractCharacter {
   /**
    * Returns the attack of this enemy.
    */
-  public int getAttack() { return this.attack; }
+  public int getAttackPoints() { return this.attackPoints; }
 
   @Override
   public void waitTurn() {
@@ -57,12 +69,13 @@ public class Enemy extends AbstractCharacter {
     final Enemy enemy = (Enemy) o;
     return  getWeight() == enemy.getWeight() &&
             getName().equals(enemy.getName()) &&
-            getDefense() == enemy.getDefense() &&
-            getAttack() == enemy.getAttack();
+            getHpMax() == enemy.getHpMax() &&
+            getDefensePoints() == enemy.getDefensePoints() &&
+            getAttackPoints() == enemy.getAttackPoints();
   }
 
   @Override
   public int hashCode() {
-    return Objects.hash(getWeight(), getName(), getDefense(), getAttack());
+    return Objects.hash(Enemy.class, getWeight(), getName(), getHpMax(), getDefensePoints(), getAttackPoints());
   }
 }

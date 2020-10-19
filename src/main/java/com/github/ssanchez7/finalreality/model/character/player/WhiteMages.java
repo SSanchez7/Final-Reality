@@ -4,13 +4,33 @@ import com.github.ssanchez7.finalreality.model.character.ICharacter;
 import com.github.ssanchez7.finalreality.model.weapon.IWeapon;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.Objects;
 import java.util.concurrent.BlockingQueue;
 
+/**
+ * A class that holds the information of a white mage, a magic playable characters in the game.
+ *
+ * @author Ignacio Slater Muñoz.
+ * @author Samuel Sanchez Parra
+ */
 public class WhiteMages extends AbstractMagicCharacter {
 
-    public WhiteMages(@NotNull String name, @NotNull BlockingQueue<ICharacter> turnsQueue, int mana,
-                      int hp, int defense){
-        super(name, turnsQueue,"white mage", mana, hp, defense);
+    /**
+     * Creates a new white mage
+     * @param name
+     *      the name of this white mage.
+     * @param turnsQueue
+     *      the queue with the characters waiting for their turn
+     * @param manaMax
+     *      the initial magic points of this white mage.
+     * @param hpMax
+     *      the initial health points of this white mage.
+     * @param defensePoints
+     *      the defense points of this white mage.
+     */
+    public WhiteMages(@NotNull String name, @NotNull BlockingQueue<ICharacter> turnsQueue, int manaMax,
+                      int hpMax, int defensePoints){
+        super(name, turnsQueue, manaMax, hpMax, defensePoints);
     }
 
     @Override
@@ -27,8 +47,14 @@ public class WhiteMages extends AbstractMagicCharacter {
             return false;
         }
         final WhiteMages character = (WhiteMages) o;
-        return getDefense() == character.getDefense() &&
-                getCharacterClass() == character.getCharacterClass() &&
+        return getDefensePoints() == character.getDefensePoints() &&
+                getHpMax() == character.getHpMax() &&
+                getManaMax() == character.getManaMax() &&
                 getName().equals(character.getName());
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(WhiteMages.class, getName(), getHpMax(), getManaMax(), getDefensePoints());
     }
 }

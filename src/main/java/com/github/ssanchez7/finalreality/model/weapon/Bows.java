@@ -1,5 +1,7 @@
 package com.github.ssanchez7.finalreality.model.weapon;
 
+import java.util.Objects;
+
 /**
  * A class that holds information of a Bow.
  *
@@ -12,7 +14,7 @@ public class Bows extends AbstractWeapon{
      * Creates a bow with a name, a base damage and weight.
      */
     public Bows(String name, int damage, int weight) {
-        super(name, damage, weight, "bow");
+        super(name, damage, weight);
     }
 
     @Override
@@ -27,6 +29,11 @@ public class Bows extends AbstractWeapon{
         return getDamage() == weapon.getDamage() &&
                 getWeight() == weapon.getWeight() &&
                 getName().equals(weapon.getName());
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(Bows.class, getName(), getDamage(), getWeight());
     }
 
 }

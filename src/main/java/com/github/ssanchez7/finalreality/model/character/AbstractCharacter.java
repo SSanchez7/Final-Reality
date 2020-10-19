@@ -17,16 +17,30 @@ public abstract class AbstractCharacter implements ICharacter {
 
   protected final BlockingQueue<ICharacter> turnsQueue;
   protected final String name;
+  protected final int hpMax;
+  private final int defensePoints;
   private int hp;
-  private final int defense;
 
+  /**
+   * Initialize a new Character
+   *
+   * @param name
+   *    Character's name
+   * @param turnsQueue
+   *    Queue with the characters ready to play
+   * @param hpMax
+   *    Character's initial health points
+   * @param defensePoints
+   *    Character's defense points
+   */
   protected AbstractCharacter(@NotNull String name,
                               @NotNull BlockingQueue<ICharacter> turnsQueue,
-                              int hp, int defense) {
+                              int hpMax, int defensePoints) {
     this.turnsQueue = turnsQueue;
     this.name = name;
-    this.hp = hp;
-    this.defense = defense;
+    this.hp = hpMax;
+    this.hpMax = hpMax;
+    this.defensePoints = defensePoints;
   }
 
   /**
@@ -48,13 +62,18 @@ public abstract class AbstractCharacter implements ICharacter {
   }
 
   @Override
-  public int getDefense(){
-    return this.defense;
+  public int getHpMax() { return this.hpMax;}
+
+  @Override
+  public int getDefensePoints(){
+    return this.defensePoints;
   }
 
   @Override
   public String getName() {
     return name;
   }
+
+
 
 }
