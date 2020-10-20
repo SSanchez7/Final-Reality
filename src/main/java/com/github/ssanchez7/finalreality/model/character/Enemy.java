@@ -2,6 +2,7 @@ package com.github.ssanchez7.finalreality.model.character;
 
 import java.util.Objects;
 import java.util.concurrent.BlockingQueue;
+import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 
 import org.jetbrains.annotations.NotNull;
@@ -55,7 +56,8 @@ public class Enemy extends AbstractCharacter {
 
   @Override
   public void waitTurn() {
-    scheduledExecutor.schedule(this::addToQueue, this.getWeight() / 10, TimeUnit.SECONDS);
+    scheduledExecutor = Executors.newSingleThreadScheduledExecutor();
+    scheduledExecutor.schedule(this::addToQueue, (this.getWeight() / 10), TimeUnit.SECONDS);
   }
 
   @Override

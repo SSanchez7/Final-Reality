@@ -1,14 +1,15 @@
 package com.github.ssanchez7.finalreality.model.character.player;
 
+import com.github.ssanchez7.finalreality.model.character.ICharacter;
 import com.github.ssanchez7.finalreality.model.weapon.IWeapon;
 
 /**
- * This represents a player from the game.
+ * This represents a playable character from the game.
  *
  * @author Ignacio Slater Muñoz.
  * @author Samuel Sanchez Parra
  */
-public interface IPlayer {
+public interface IPlayer extends ICharacter {
     /**
      * Returns the character's equipped weapon.
      */

@@ -28,9 +28,9 @@ public class WhiteMages extends AbstractMagicCharacter {
      * @param defensePoints
      *      the defense points of this white mage.
      */
-    public WhiteMages(@NotNull String name, @NotNull BlockingQueue<ICharacter> turnsQueue, int manaMax,
-                      int hpMax, int defensePoints){
-        super(name, turnsQueue, manaMax, hpMax, defensePoints);
+    public WhiteMages(@NotNull String name, @NotNull BlockingQueue<ICharacter> turnsQueue,
+                      int hpMax, int defensePoints, int manaMax){
+        super(name, turnsQueue, hpMax, defensePoints, manaMax);
     }
 
     @Override

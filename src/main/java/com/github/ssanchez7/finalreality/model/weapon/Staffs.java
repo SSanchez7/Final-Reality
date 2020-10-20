@@ -20,6 +20,10 @@ public class Staffs extends AbstractWeapon{
         this.magicDamage = magicDamage;
     }
 
+    public int getMagicDamage(){
+        return this.magicDamage;
+    }
+
     @Override
     public boolean equals(final Object o) {
         if (this == o) {
@@ -31,11 +35,12 @@ public class Staffs extends AbstractWeapon{
         final Staffs weapon = (Staffs) o;
         return getDamage() == weapon.getDamage() &&
                 getWeight() == weapon.getWeight() &&
-                getName().equals(weapon.getName());
+                getName().equals(weapon.getName()) &&
+                getMagicDamage() == weapon.getMagicDamage();
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(Staffs.class, getName(), getDamage(), getWeight());
+        return Objects.hash(Staffs.class, getName(), getDamage(), getWeight(), getMagicDamage());
     }
 }

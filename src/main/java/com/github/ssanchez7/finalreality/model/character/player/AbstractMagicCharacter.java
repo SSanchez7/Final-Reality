@@ -41,21 +41,21 @@ public abstract class AbstractMagicCharacter extends AbstractPlayerCharacter {
     /**
      * Set this character's actual magic points.
      */
-    protected void setMana(int mana){
+    public void setMana(int mana){
         this.mana = mana;
     }
 
     /**
      * Returns this character's actual magic points.
      */
-    protected int getMana(){
+    public int getMana(){
         return this.mana;
     }
 
     /**
      * Returns this character's initial magic points.
      */
-    protected int getManaMax(){
+    public int getManaMax(){
         return this.manaMax;
     }
 
