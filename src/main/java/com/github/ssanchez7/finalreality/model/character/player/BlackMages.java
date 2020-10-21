@@ -21,12 +21,12 @@ public class BlackMages extends AbstractMagicCharacter {
      *      the name of this black mage.
      * @param turnsQueue
      *      the queue with the characters waiting for their turn
-     * @param manaMax
-     *      the initial magic points of this black mage.
      * @param hpMax
      *      the initial health points of this black mage.
      * @param defensePoints
      *      the defense points of this black mage.
+     * @param manaMax
+     *      the initial magic points of this black mage.
      */
     public BlackMages(@NotNull String name, @NotNull BlockingQueue<ICharacter> turnsQueue,
                       int hpMax, int defensePoints, int manaMax){

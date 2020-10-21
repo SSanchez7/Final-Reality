@@ -16,11 +16,11 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 /**
- * Set of tests for the {@code GameCharacter} class.
+ * containing the tests for playable characters.
  *
  * @author Ignacio Slater Muñoz.
  * @author Samuel Sanchez Parra
- * @see AbstractPlayerCharacter
+ * @see IPlayer
  */
 class PlayerCharacterTest extends AbstractCharacterTest {
 
@@ -38,10 +38,8 @@ class PlayerCharacterTest extends AbstractCharacterTest {
   private static final int MANA_MAX = 100;
   private static final int DEFENSE_POINTS = 40;
 
-  /**
-   * Setup method.
-   * Creates a new character named Vivi with 10 speed and links it to a turn queue.
-   */
+
+
   @BeforeEach
   void setUp() {
     super.basicSetUp();
@@ -147,6 +145,9 @@ class PlayerCharacterTest extends AbstractCharacterTest {
       }
   }
 
+  /**
+   * Checks that the character equips a weapon correctly.
+   */
   @Test
   void equipWeaponTest() {
     for (var character : testPlayerCharacters) {
@@ -156,6 +157,9 @@ class PlayerCharacterTest extends AbstractCharacterTest {
     }
   }
 
+  /**
+   * Checks the get and set from Mana.
+   */
   @Test
   void manaTest(){
     assertEquals(MANA_MAX, mage.getMana());
@@ -165,6 +169,9 @@ class PlayerCharacterTest extends AbstractCharacterTest {
     assertNotEquals(mage.getManaMax(), mage.getMana());
   }
 
+  /**
+   * Checks the get and set from Hp.
+   */
   @Test
   void hpTest(){
     assertEquals(HP_MAX, mage.getHp());
@@ -173,6 +180,10 @@ class PlayerCharacterTest extends AbstractCharacterTest {
     assertEquals(HP_MAX+10,mage.getHp());
     assertNotEquals(mage.getHpMax(), mage.getHp());
   }
+
+  /**
+   * Auxiliary function that tries to equip a weapon on a character
+   */
   protected void tryToEquip(IPlayer character) {
     character.equip(testWeapon);
   }

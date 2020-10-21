@@ -21,12 +21,12 @@ public class WhiteMages extends AbstractMagicCharacter {
      *      the name of this white mage.
      * @param turnsQueue
      *      the queue with the characters waiting for their turn
-     * @param manaMax
-     *      the initial magic points of this white mage.
      * @param hpMax
      *      the initial health points of this white mage.
      * @param defensePoints
      *      the defense points of this white mage.
+     * @param manaMax
+     *      the initial magic points of this white mage.
      */
     public WhiteMages(@NotNull String name, @NotNull BlockingQueue<ICharacter> turnsQueue,
                       int hpMax, int defensePoints, int manaMax){

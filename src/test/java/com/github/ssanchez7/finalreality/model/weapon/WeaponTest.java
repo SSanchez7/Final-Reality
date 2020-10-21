@@ -3,6 +3,7 @@ package com.github.ssanchez7.finalreality.model.weapon;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
 
+import com.github.ssanchez7.finalreality.model.character.ICharacter;
 import com.github.ssanchez7.finalreality.model.character.player.IPlayer;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -12,6 +13,13 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
+/**
+ * containing the tests for weapons.
+ *
+ * @author Ignacio Slater Muñoz.
+ * @author Samuel Sanchez Parra
+ * @see IWeapon
+ */
 class WeaponTest {
 
   private static final String AXE_NAME = "Test Axe";
@@ -35,6 +43,9 @@ class WeaponTest {
     testWeapons.add(new Knives(KNIFE_NAME, DAMAGE, WEIGHT));
   }
 
+  /**
+   * Checks that the class' constructor and equals method works properly.
+   */
   @Test
   void constructorTest() {
     List<IWeapon> expectedWeapons = new ArrayList<>();

@@ -18,7 +18,7 @@ import org.junit.jupiter.api.Test;
  * Abstract class containing the common tests for all the types of characters.
  *
  * @author Ignacio Slater Muñoz.
- * @author <Your name>
+ * @author Samuel Sanchez Parra
  * @see ICharacter
  */
 public abstract class AbstractCharacterTest {
@@ -31,11 +31,17 @@ public abstract class AbstractCharacterTest {
   @Test
   abstract void waitTurnTest();
 
+  /**
+   * Auxiliary function that checks that the equals method works properly.
+   */
   protected void checkConstruction(final ICharacter expectedCharacter, final ICharacter testEqualCharacter) {
     assertEquals(expectedCharacter, testEqualCharacter);
     assertEquals(expectedCharacter.hashCode(), testEqualCharacter.hashCode());
   }
 
+  /**
+   * Auxiliary function that set the common SetUp's.
+   */
   protected void basicSetUp() {
     turns = new LinkedBlockingQueue<>();
   }

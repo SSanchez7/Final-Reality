@@ -1,6 +1,7 @@
 package com.github.ssanchez7.finalreality.model.character;
 
 
+import com.github.ssanchez7.finalreality.model.character.player.IPlayer;
 import com.github.ssanchez7.finalreality.model.character.player.Knights;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -10,7 +11,13 @@ import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-
+/**
+ * Class containing the tests for Enemies.
+ *
+ * @author Ignacio Slater Muñoz.
+ * @author Samuel Sanchez Parra
+ * @see Enemy
+ */
 class EnemyTest extends AbstractCharacterTest {
 
   protected ICharacter testEnemy;
@@ -27,6 +34,9 @@ class EnemyTest extends AbstractCharacterTest {
     testEnemy = new Enemy(ENEMY_NAME, turns, ENEMY_HP_MAX, ENEMY_DEFENSE_POINTS, ENEMY_ATTACK_POINTS, ENEMY_WEIGHT);
   }
 
+  /**
+   * Checks that the class' constructor and equals method works properly.
+   */
   @Test
   void constructorTest() {
     List<ICharacter> expectedEnemy = new ArrayList<>();
@@ -42,7 +52,7 @@ class EnemyTest extends AbstractCharacterTest {
     expectedEnemy.add(new Enemy(ENEMY_NAME, turns, ENEMY_HP_MAX, ENEMY_DEFENSE_POINTS+10, ENEMY_ATTACK_POINTS, ENEMY_WEIGHT));
     expectedEnemy.add(new Enemy(ENEMY_NAME, turns, ENEMY_HP_MAX, ENEMY_DEFENSE_POINTS, ENEMY_ATTACK_POINTS+10, ENEMY_WEIGHT));
     expectedEnemy.add(new Enemy(ENEMY_NAME, turns, ENEMY_HP_MAX, ENEMY_DEFENSE_POINTS, ENEMY_ATTACK_POINTS, ENEMY_WEIGHT+10));
-    
+
     for (int i=1;i<=5;i++){
       assertNotEquals(expectedEnemy.get(i),testEnemy);
     }
