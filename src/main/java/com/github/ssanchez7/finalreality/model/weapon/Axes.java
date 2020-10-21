@@ -1,5 +1,7 @@
 package com.github.ssanchez7.finalreality.model.weapon;
 
+import java.util.Objects;
+
 /**
  * A class that holds information of a Axe.
  *
@@ -12,7 +14,7 @@ public class Axes extends AbstractWeapon{
      * Creates a axe with a name, a base damage and weight.
      */
     public Axes(String name, int damage, int weight) {
-        super(name, damage, weight, "axe");
+        super(name, damage, weight);
     }
 
     @Override
@@ -27,5 +29,10 @@ public class Axes extends AbstractWeapon{
         return getDamage() == weapon.getDamage() &&
                 getWeight() == weapon.getWeight() &&
                 getName().equals(weapon.getName());
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(Axes.class, getName(), getDamage(), getWeight());
     }
 }

@@ -21,17 +21,22 @@ public interface ICharacter {
   String getName();
 
   /**
-   * Returns this character's Hp.
+   * Returns this character's actual health points.
    */
   int getHp();
 
   /**
-   * Set this character's Hp.
+   * Set this character's actual health points.
    */
   void setHp(int hp);
 
   /**
    * Returns this character's defense.
    */
-  int getDefense();
+  int getDefensePoints();
+
+  /**
+   * Returns this character's initial health points.
+   */
+  int getHpMax();
 }

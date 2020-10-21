@@ -2,7 +2,6 @@ package com.github.ssanchez7.finalreality.model.character.player;
 
 import com.github.ssanchez7.finalreality.model.character.AbstractCharacter;
 import com.github.ssanchez7.finalreality.model.character.ICharacter;
-import java.util.Objects;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
@@ -14,32 +13,28 @@ import org.jetbrains.annotations.NotNull;
  * A class that holds all the information of a single character of the game.
  *
  * @author Ignacio Slater Muñoz.
- * @author <Your name>
+ * @author Samuel Sanchez Parra
  */
 public abstract class AbstractPlayerCharacter extends AbstractCharacter implements IPlayer{
 
   protected IWeapon equippedWeapon = null;
-  private final String characterClass;
 
   /**
-   * Creates a new character.
+   * Initialize a new playable character.
    *
    * @param name
    *     the character's name
    * @param turnsQueue
    *     the queue with the characters waiting for their turn
-   * @param characterClass
-   *     the class of this character
-   * @param hp
-   *     the hp of this character
-   * @param defense
+   * @param hpMax
+   *     the initial hp of this character
+   * @param defensePoints
    *     the defense of this character
    */
   public AbstractPlayerCharacter(@NotNull String name,
                                  @NotNull BlockingQueue<ICharacter> turnsQueue,
-                                 String characterClass, int hp, int defense) {
-    super(name, turnsQueue, hp, defense);
-    this.characterClass = characterClass;
+                                 int hpMax, int defensePoints) {
+    super(name, turnsQueue, hpMax, defensePoints);
   }
 
   @Override
@@ -47,22 +42,10 @@ public abstract class AbstractPlayerCharacter extends AbstractCharacter implemen
     return equippedWeapon;
   }
 
-  public abstract void equip(IWeapon weapon);
-
-  @Override
-  public String getCharacterClass() {
-    return characterClass;
-  }
-
   @Override
   public void waitTurn() {
     scheduledExecutor = Executors.newSingleThreadScheduledExecutor();
     scheduledExecutor.schedule(this::addToQueue, equippedWeapon.getWeight() / 10, TimeUnit.SECONDS);
-  }
-
-  @Override
-  public int hashCode() {
-    return Objects.hash(getCharacterClass());
   }
 
 }

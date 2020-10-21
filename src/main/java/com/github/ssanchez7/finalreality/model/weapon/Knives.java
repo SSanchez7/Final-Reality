@@ -3,17 +3,17 @@ package com.github.ssanchez7.finalreality.model.weapon;
 import java.util.Objects;
 
 /**
- * A class that holds information of a Bow.
+ * A class that holds information of a Knife.
  *
  * @author Ignacio Slater Muñoz.
  * @author Samuel Sanchez Parra.
  */
-public class Bows extends AbstractWeapon{
+public class Knives extends AbstractWeapon {
 
     /**
-     * Creates a bow with a name, a base damage and weight.
+     * Creates a Knife with a name, a base damage and weight.
      */
-    public Bows(String name, int damage, int weight) {
+    public Knives(String name, int damage, int weight) {
         super(name, damage, weight);
     }
 
@@ -22,10 +22,10 @@ public class Bows extends AbstractWeapon{
         if (this == o) {
             return true;
         }
-        if (!(o instanceof Bows)) {
+        if (!(o instanceof Knives)) {
             return false;
         }
-        final Bows weapon = (Bows) o;
+        final Knives weapon = (Knives) o;
         return getDamage() == weapon.getDamage() &&
                 getWeight() == weapon.getWeight() &&
                 getName().equals(weapon.getName());
@@ -33,7 +33,6 @@ public class Bows extends AbstractWeapon{
 
     @Override
     public int hashCode() {
-        return Objects.hash(Bows.class, getName(), getDamage(), getWeight());
+        return Objects.hash(Knives.class, getName(), getDamage(), getWeight());
     }
-
 }

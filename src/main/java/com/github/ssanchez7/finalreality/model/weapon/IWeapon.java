@@ -20,13 +20,9 @@ public interface IWeapon {
     int getDamage();
 
     /**
-     * Returns the wepaon's weight.
+     * Returns the weapon's weight.
      */
     int getWeight();
 
-    /**
-     * Returns this weapon's type.
-     */
-    String getType();
 
 }
