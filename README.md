@@ -28,3 +28,6 @@ Dada la etapa temprana del proyecto, en donde recien se han establecido los esqu
 * Los Caballeros, Ladrones e Ingenieros son tipos particulares de personajes jugables, mientras que los Magos Negros y Magos Blancos, son tipos particulares de personajes jugables magicos. Todos ellos implementan de forma particular el equipamento de un arma.
 * Los enemigos, por otro lado, son tipos particulares de un personaje, estos no son jugables. Como tal poseen de manera extra un peso y puntos de ataque, junto con sus respectivos metodos para obtenerlos. Al ser un personaje NO jugable, implementa de manera particular y distinta el metodo de esperar turno.
 * Los distintos tipos de personajes jugables tienen la posibilidad de equiparse de manera distinta un arma (dependiendo de su tipo). Esta fucionalidad (junto a otras mas), sera desarrollada en la proxima entrega, por el momento se definio de igual forma para todas las clases.
+* Un arma en general posee un nombre, daño y peso asociado, junto a sus getters.
+* Existen 5 tipos particulares de armas: Las hachas, los arcos, los cuchillos, las espadas y los bastones. Estos ultimos poseen de manera especial un daño magico usado para efectuar distintos hechizos.
+* Todas las armas pueden ser equipadas de manera exclusiva por algunos personajes.
