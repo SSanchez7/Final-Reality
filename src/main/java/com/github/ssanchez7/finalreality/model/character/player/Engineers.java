@@ -31,10 +31,11 @@ public class Engineers extends AbstractPlayerCharacter {
     }
 
     @Override
-    public void equip(IWeapon weapon){
-        this.equippedWeapon=weapon;
+    public void equip(IWeapon weapon) {
+        if(weapon.equipOnEngineer(this)){
+            this.equippedWeapon = weapon;
+        }
     }
-
     @Override
     public boolean equals(final Object o) {
         if (this == o) {

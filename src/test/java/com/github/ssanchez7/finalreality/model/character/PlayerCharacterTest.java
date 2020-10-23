@@ -9,8 +9,7 @@ import com.github.ssanchez7.finalreality.model.character.player.*;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.github.ssanchez7.finalreality.model.weapon.Axes;
-import com.github.ssanchez7.finalreality.model.weapon.IWeapon;
+import com.github.ssanchez7.finalreality.model.weapon.*;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -25,8 +24,7 @@ import org.junit.jupiter.api.Test;
 class PlayerCharacterTest extends AbstractCharacterTest {
 
   protected List<IPlayer> testPlayerCharacters;
-  protected IWeapon testWeapon;
-  protected BlackMages mage;
+  protected List<IWeapon> testWeapons;
 
   private static final String BLACK_MAGE_NAME = "Vivi";
   private static final String KNIGHT_NAME = "Adelbert";
@@ -43,8 +41,13 @@ class PlayerCharacterTest extends AbstractCharacterTest {
   @BeforeEach
   void setUp() {
     super.basicSetUp();
-    mage = new BlackMages("Merlin", turns, HP_MAX, DEFENSE_POINTS, MANA_MAX);
-    testWeapon = new Axes("Test", 15, 10);
+
+    testWeapons = new ArrayList<>();
+    testWeapons.add(new Axes("Axe", 15,  10));
+    testWeapons.add(new Bows("Bow", 15,  10));
+    testWeapons.add(new Knives("Knife", 15,  10));
+    testWeapons.add(new Staffs("Staff", 15,  10, 20));
+    testWeapons.add(new Swords("Sword", 15,  10));
 
     testPlayerCharacters = new ArrayList<>();
     testPlayerCharacters.add(new BlackMages(BLACK_MAGE_NAME, turns,  HP_MAX, DEFENSE_POINTS, MANA_MAX));
@@ -146,15 +149,93 @@ class PlayerCharacterTest extends AbstractCharacterTest {
   }
 
   /**
-   * Checks that the character equips a weapon correctly.
+   * Checks that the character equips a Axe correctly.
    */
   @Test
-  void equipWeaponTest() {
-    for (var character : testPlayerCharacters) {
-      assertNull(character.getEquippedWeapon());
+  void equipAxeTest(){
+    IWeapon testWeapon = testWeapons.get(0);
+    for(int i=0; i<5;i++){
+      IPlayer character = testPlayerCharacters.get(i);
+      assertEquals(null, character.getEquippedWeapon());
       character.equip(testWeapon);
-      assertEquals(testWeapon, character.getEquippedWeapon());
     }
+    assertEquals(null, testPlayerCharacters.get(0).getEquippedWeapon());
+    assertEquals(testWeapon, testPlayerCharacters.get(1).getEquippedWeapon());
+    assertEquals(null, testPlayerCharacters.get(2).getEquippedWeapon());
+    assertEquals(testWeapon, testPlayerCharacters.get(3).getEquippedWeapon());
+    assertEquals(null, testPlayerCharacters.get(4).getEquippedWeapon());
+  }
+
+  /**
+   * Checks that the character equips a Bow correctly.
+   */
+  @Test
+  void equipBowTest(){
+    IWeapon testWeapon = testWeapons.get(1);
+    for(int i=0; i<5;i++){
+      IPlayer character = testPlayerCharacters.get(i);
+      assertEquals(null, character.getEquippedWeapon());
+      character.equip(testWeapon);
+    }
+    assertEquals(null, testPlayerCharacters.get(0).getEquippedWeapon());
+    assertEquals(null, testPlayerCharacters.get(1).getEquippedWeapon());
+    assertEquals(null, testPlayerCharacters.get(2).getEquippedWeapon());
+    assertEquals(testWeapon, testPlayerCharacters.get(3).getEquippedWeapon());
+    assertEquals(testWeapon, testPlayerCharacters.get(4).getEquippedWeapon());
+  }
+
+  /**
+   * Checks that the character equips a Knife correctly.
+   */
+  @Test
+  void equipKnifeTest(){
+    IWeapon testWeapon = testWeapons.get(2);
+    for(int i=0; i<5;i++){
+      IPlayer character = testPlayerCharacters.get(i);
+      assertEquals(null, character.getEquippedWeapon());
+      character.equip(testWeapon);
+    }
+    assertEquals(testWeapon, testPlayerCharacters.get(0).getEquippedWeapon());
+    assertEquals(testWeapon, testPlayerCharacters.get(1).getEquippedWeapon());
+    assertEquals(null, testPlayerCharacters.get(2).getEquippedWeapon());
+    assertEquals(null, testPlayerCharacters.get(3).getEquippedWeapon());
+    assertEquals(testWeapon, testPlayerCharacters.get(4).getEquippedWeapon());
+  }
+
+  /**
+   * Checks that the character equips a Staff correctly.
+   */
+  @Test
+  void equipStaffTest(){
+    IWeapon testWeapon = testWeapons.get(3);
+    for(int i=0; i<5;i++){
+      IPlayer character = testPlayerCharacters.get(i);
+      assertEquals(null, character.getEquippedWeapon());
+      character.equip(testWeapon);
+    }
+    assertEquals(testWeapon, testPlayerCharacters.get(0).getEquippedWeapon());
+    assertEquals(null, testPlayerCharacters.get(1).getEquippedWeapon());
+    assertEquals(testWeapon, testPlayerCharacters.get(2).getEquippedWeapon());
+    assertEquals(null, testPlayerCharacters.get(3).getEquippedWeapon());
+    assertEquals(null , testPlayerCharacters.get(4).getEquippedWeapon());
+  }
+
+  /**
+   * Checks that the character equips a Sword correctly.
+   */
+  @Test
+  void equipSwordTest(){
+    IWeapon testWeapon = testWeapons.get(4);
+    for(int i=0; i<5;i++){
+      IPlayer character = testPlayerCharacters.get(i);
+      assertEquals(null, character.getEquippedWeapon());
+      character.equip(testWeapon);
+    }
+    assertEquals(null, testPlayerCharacters.get(0).getEquippedWeapon());
+    assertEquals(testWeapon, testPlayerCharacters.get(1).getEquippedWeapon());
+    assertEquals(null, testPlayerCharacters.get(2).getEquippedWeapon());
+    assertEquals(null, testPlayerCharacters.get(3).getEquippedWeapon());
+    assertEquals(testWeapon, testPlayerCharacters.get(4).getEquippedWeapon());
   }
 
   /**
@@ -162,6 +243,7 @@ class PlayerCharacterTest extends AbstractCharacterTest {
    */
   @Test
   void manaTest(){
+    BlackMages mage = (BlackMages) testPlayerCharacters.get(0);
     assertEquals(MANA_MAX, mage.getMana());
     assertEquals(mage.getManaMax(), mage.getMana());
     mage.setMana(mage.getMana()+10);
@@ -174,6 +256,7 @@ class PlayerCharacterTest extends AbstractCharacterTest {
    */
   @Test
   void hpTest(){
+    BlackMages mage = (BlackMages) testPlayerCharacters.get(0);
     assertEquals(HP_MAX, mage.getHp());
     assertEquals(mage.getHpMax(), mage.getHp());
     mage.setHp(mage.getHp()+10);
@@ -185,7 +268,7 @@ class PlayerCharacterTest extends AbstractCharacterTest {
    * Auxiliary function that tries to equip a weapon on a character
    */
   protected void tryToEquip(IPlayer character) {
-    character.equip(testWeapon);
+    character.equip(testWeapons.get(3));
   }
 
 
