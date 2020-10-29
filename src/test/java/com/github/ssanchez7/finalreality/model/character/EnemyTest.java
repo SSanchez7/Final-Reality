@@ -76,4 +76,33 @@ class EnemyTest extends AbstractCharacterTest {
       e.printStackTrace();
     }
   }
+
+  @Test @Override
+  void attackTest(){
+    ICharacter attackedEnemy = new Enemy("attackedEnemy", turns, ENEMY_HP_MAX, 5, ENEMY_ATTACK_POINTS, ENEMY_WEIGHT);
+    ICharacter attackedPlayer = new Knights("attackedPlayer", turns, ENEMY_HP_MAX, 5);
+
+    // attack to another enemy
+    assertEquals(ENEMY_HP_MAX,attackedEnemy.getHp());
+    testEnemy.attack(attackedEnemy);
+    assertEquals(ENEMY_HP_MAX-(ENEMY_ATTACK_POINTS-5),attackedEnemy.getHp());
+
+    // attack to a player
+    assertEquals(ENEMY_HP_MAX,attackedPlayer.getHp());
+    testEnemy.attack(attackedPlayer);
+    assertEquals(ENEMY_HP_MAX-(ENEMY_ATTACK_POINTS-5),attackedPlayer.getHp());
+
+    // defeated enemy attacks
+    ICharacter defeatedEnemy = new Enemy("defeatedEnemy", turns, 0, ENEMY_DEFENSE_POINTS, ENEMY_ATTACK_POINTS, ENEMY_WEIGHT);
+    assertEquals(ENEMY_HP_MAX,testEnemy.getHp());
+    defeatedEnemy.attack(testEnemy);
+    assertEquals(ENEMY_HP_MAX,testEnemy.getHp());
+
+    // attack to a defeated enemy
+    assertEquals(0,defeatedEnemy.getHp());
+    testEnemy.attack(defeatedEnemy);
+    assertEquals(0,defeatedEnemy.getHp());
+
+
+  }
 }

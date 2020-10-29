@@ -35,9 +35,10 @@ public class WhiteMages extends AbstractMagicCharacter {
 
     @Override
     public void equip(IWeapon weapon){
-        this.equippedWeapon=weapon;
+        if(weapon.equipOnWhiteMage(this) && this.getHp()>0){
+            this.equippedWeapon = weapon;
+        }
     }
-
     @Override
     public boolean equals(final Object o) {
         if (this == o) {

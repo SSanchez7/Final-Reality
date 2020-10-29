@@ -32,9 +32,10 @@ public class Knights extends AbstractPlayerCharacter {
 
     @Override
     public void equip(IWeapon weapon){
-        this.equippedWeapon=weapon;
+        if(weapon.equipOnKnight(this) && this.getHp()>0){
+            this.equippedWeapon = weapon;
+        }
     }
-
     @Override
     public boolean equals(final Object o) {
         if (this == o) {

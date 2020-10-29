@@ -74,6 +74,17 @@ public abstract class AbstractCharacter implements ICharacter {
     return name;
   }
 
+  @Override
+  public void beAttacked(int baseDamage){
+    if (this.getHp()>0) {
+      int damage;
+      damage = (baseDamage > this.getDefensePoints()) ? baseDamage - this.getDefensePoints() : 0;
+      damage = (damage > this.getHp()) ? this.getHp() : damage;
+      this.setHp(this.getHp() - damage);
+    }
+
+  }
+
 
 
 }

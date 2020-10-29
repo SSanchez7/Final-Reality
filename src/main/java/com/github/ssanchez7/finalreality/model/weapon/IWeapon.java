@@ -1,5 +1,7 @@
 package com.github.ssanchez7.finalreality.model.weapon;
 
+import com.github.ssanchez7.finalreality.model.character.player.IPlayer;
+
 /**
  * This represents a weapon from the game.
  * A item can be used by a character according to the type.
@@ -24,5 +26,13 @@ public interface IWeapon {
      */
     int getWeight();
 
+    /**
+     * Returns logical value from: if the weapon can be equipped on the player.
+     */
+    boolean equipOnKnight(IPlayer player);
+    boolean equipOnThief(IPlayer player);
+    boolean equipOnEngineer(IPlayer player);
+    boolean equipOnBlackMage(IPlayer player);
+    boolean equipOnWhiteMage(IPlayer player);
 
 }

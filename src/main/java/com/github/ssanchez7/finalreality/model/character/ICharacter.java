@@ -39,4 +39,18 @@ public interface ICharacter {
    * Returns this character's initial health points.
    */
   int getHpMax();
+
+  /**
+   * This character attacks another character
+   * @param attacked
+   * The attacked character
+   */
+  void attack(ICharacter attacked);
+
+  /**
+   * this character receives the base damage and discounts it of their hp
+   * @param baseDamage
+   * the base damage applied to this character
+   */
+  void beAttacked(int baseDamage);
 }
