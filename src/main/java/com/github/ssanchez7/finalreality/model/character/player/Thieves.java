@@ -32,7 +32,7 @@ public class Thieves extends AbstractPlayerCharacter {
 
     @Override
     public void equip(IWeapon weapon){
-        if(weapon.equipOnThief(this)){
+        if(weapon.equipOnThief(this) && this.getHp()>0){
             this.equippedWeapon = weapon;
         }
     }

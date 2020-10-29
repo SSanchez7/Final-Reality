@@ -48,4 +48,15 @@ public abstract class AbstractPlayerCharacter extends AbstractCharacter implemen
     scheduledExecutor.schedule(this::addToQueue, equippedWeapon.getWeight() / 10, TimeUnit.SECONDS);
   }
 
+
+  @Override
+  public void attack(ICharacter attacked) {
+    if (this.getHp() > 0) {
+      int baseDamage;
+      baseDamage = (this.getEquippedWeapon() != null) ? this.getEquippedWeapon().getDamage() : 1;
+      attacked.beAttacked(baseDamage);
+    }
+  }
+
+
 }

@@ -32,7 +32,7 @@ public class Engineers extends AbstractPlayerCharacter {
 
     @Override
     public void equip(IWeapon weapon) {
-        if(weapon.equipOnEngineer(this)){
+        if(weapon.equipOnEngineer(this) && this.getHp()>0){
             this.equippedWeapon = weapon;
         }
     }

@@ -40,6 +40,12 @@ public abstract class AbstractCharacterTest {
   }
 
   /**
+   * Checks that the character correctly attacks another (Player to Player, Player to Enemy, Enemy to Player and Enemy to Enemy).
+   */
+  @Test
+  abstract void attackTest();
+
+  /**
    * Auxiliary function that set the common SetUp's.
    */
   protected void basicSetUp() {
