@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Diagram>
+  <ID>JAVA</ID>
+  <OriginalElement>com.github.ssanchez7.finalreality.model.weapon</OriginalElement>
+  <nodes>
+    <node x="498.99999999999994" y="0.0">com.github.ssanchez7.finalreality.model.weapon.IWeapon</node>
+    <node x="1016.0" y="650.5">com.github.ssanchez7.finalreality.model.weapon.Bows</node>
+    <node x="249.99999999999994" y="639.5">com.github.ssanchez7.finalreality.model.weapon.Knives</node>
+    <node x="511.99999999999994" y="650.5">com.github.ssanchez7.finalreality.model.weapon.Swords</node>
+    <node x="498.99999999999994" y="258.0">com.github.ssanchez7.finalreality.model.weapon.AbstractWeapon</node>
+    <node x="751.0" y="628.0">com.github.ssanchez7.finalreality.model.weapon.Staffs</node>
+    <node x="0.0" y="650.5">com.github.ssanchez7.finalreality.model.weapon.Axes</node>
+  </nodes>
+  <notes />
+  <edges>
+    <edge source="com.github.ssanchez7.finalreality.model.weapon.AbstractWeapon" target="com.github.ssanchez7.finalreality.model.weapon.IWeapon">
+      <point x="0.0" y="-160.0" />
+      <point x="0.0" y="104.0" />
+    </edge>
+    <edge source="com.github.ssanchez7.finalreality.model.weapon.Swords" target="com.github.ssanchez7.finalreality.model.weapon.AbstractWeapon">
+      <point x="0.0" y="-71.5" />
+      <point x="0.0" y="160.0" />
+    </edge>
+    <edge source="com.github.ssanchez7.finalreality.model.weapon.Bows" target="com.github.ssanchez7.finalreality.model.weapon.AbstractWeapon">
+      <point x="0.0" y="-71.5" />
+      <point x="1131.0" y="598.0" />
+      <point x="719.5" y="598.0" />
+      <point x="98.0" y="160.0" />
+    </edge>
+    <edge source="com.github.ssanchez7.finalreality.model.weapon.Staffs" target="com.github.ssanchez7.finalreality.model.weapon.AbstractWeapon">
+      <point x="0.0" y="-94.0" />
+      <point x="873.5" y="608.0" />
+      <point x="670.5" y="608.0" />
+      <point x="49.0" y="160.0" />
+    </edge>
+    <edge source="com.github.ssanchez7.finalreality.model.weapon.Axes" target="com.github.ssanchez7.finalreality.model.weapon.AbstractWeapon">
+      <point x="0.0" y="-71.5" />
+      <point x="115.0" y="598.0" />
+      <point x="523.5" y="598.0" />
+      <point x="-98.0" y="160.0" />
+    </edge>
+    <edge source="com.github.ssanchez7.finalreality.model.weapon.Knives" target="com.github.ssanchez7.finalreality.model.weapon.AbstractWeapon">
+      <point x="0.0" y="-82.5" />
+      <point x="370.99999999999994" y="608.0" />
+      <point x="572.5" y="608.0" />
+      <point x="-49.0" y="160.0" />
+    </edge>
+  </edges>
+  <settings layout="Hierarchic Group" zoom="1.0" x="264.0" y="387.5" />
+  <SelectedNodes />
+  <Categories>
+    <Category>Fields</Category>
+    <Category>Constructors</Category>
+    <Category>Methods</Category>
+  </Categories>
+  <SCOPE>All</SCOPE>
+  <VISIBILITY>private</VISIBILITY>
+</Diagram>
+
