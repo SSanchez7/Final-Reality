@@ -2,6 +2,8 @@ package com.github.ssanchez7.finalreality.model.weapon;
 
 import com.github.ssanchez7.finalreality.model.character.player.IPlayer;
 
+import java.util.Objects;
+
 /**
  * A class that holds the common information of all the weapons.
  *
@@ -44,5 +46,10 @@ public abstract class AbstractWeapon implements IWeapon{
     public boolean equipOnBlackMage(IPlayer player){ return false; }
     @Override
     public boolean equipOnWhiteMage(IPlayer player){ return false; }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(getName(), getDamage(), getWeight());
+    }
 
 }
