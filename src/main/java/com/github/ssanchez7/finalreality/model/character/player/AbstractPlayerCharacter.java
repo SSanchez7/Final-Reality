@@ -2,6 +2,8 @@ package com.github.ssanchez7.finalreality.model.character.player;
 
 import com.github.ssanchez7.finalreality.model.character.AbstractCharacter;
 import com.github.ssanchez7.finalreality.model.character.ICharacter;
+
+import java.util.Objects;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
@@ -57,6 +59,7 @@ public abstract class AbstractPlayerCharacter extends AbstractCharacter implemen
       attacked.beAttacked(baseDamage);
     }
   }
+
 
 
 }

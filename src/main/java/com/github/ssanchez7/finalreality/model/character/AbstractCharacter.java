@@ -1,8 +1,10 @@
 package com.github.ssanchez7.finalreality.model.character;
 
+import java.util.Objects;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.ScheduledExecutorService;
 
+import com.github.ssanchez7.finalreality.model.character.player.Thieves;
 import org.jetbrains.annotations.NotNull;
 
 /**
@@ -82,7 +84,11 @@ public abstract class AbstractCharacter implements ICharacter {
       damage = (damage > this.getHp()) ? this.getHp() : damage;
       this.setHp(this.getHp() - damage);
     }
+  }
 
+  @Override
+  public int hashCode() {
+    return Objects.hash(getName(), getHpMax(), getDefensePoints());
   }
 
 

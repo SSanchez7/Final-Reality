@@ -51,7 +51,5 @@ public class Knights extends AbstractPlayerCharacter {
     }
 
     @Override
-    public int hashCode() {
-        return Objects.hash(Knights.class, getName(), getHpMax(), getDefensePoints());
-    }
+    public int hashCode() { return Objects.hash(Knights.class, super.hashCode()); }
 }
