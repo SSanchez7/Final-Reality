@@ -1,6 +1,6 @@
 package com.github.ssanchez7.finalreality.model.weapon;
 
-import com.github.ssanchez7.finalreality.model.character.player.IPlayer;
+import com.github.ssanchez7.finalreality.model.character.player.*;
 
 import java.util.Objects;
 
@@ -37,15 +37,15 @@ public abstract class AbstractWeapon implements IWeapon{
     public int getWeight() { return weight; }
 
     @Override
-    public boolean equipOnKnight(IPlayer player){ return false; }
+    public boolean equipOnKnight(Knights player){ return false; }
     @Override
-    public boolean equipOnThief(IPlayer player){ return false; }
+    public boolean equipOnThief(Thieves player){ return false; }
     @Override
-    public boolean equipOnEngineer(IPlayer player){ return false; }
+    public boolean equipOnEngineer(Engineers player){ return false; }
     @Override
-    public boolean equipOnBlackMage(IPlayer player){ return false; }
+    public boolean equipOnBlackMage(BlackMages player){ return false; }
     @Override
-    public boolean equipOnWhiteMage(IPlayer player){ return false; }
+    public boolean equipOnWhiteMage(WhiteMages player){ return false; }
 
     @Override
     public int hashCode() {

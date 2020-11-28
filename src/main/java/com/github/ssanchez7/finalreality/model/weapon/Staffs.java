@@ -1,6 +1,8 @@
 package com.github.ssanchez7.finalreality.model.weapon;
 
+import com.github.ssanchez7.finalreality.model.character.player.BlackMages;
 import com.github.ssanchez7.finalreality.model.character.player.IPlayer;
+import com.github.ssanchez7.finalreality.model.character.player.WhiteMages;
 
 import java.util.Objects;
 
@@ -23,9 +25,9 @@ public class Staffs extends AbstractWeapon{
     }
 
     @Override
-    public boolean equipOnBlackMage(IPlayer player){ return true; }
+    public boolean equipOnBlackMage(BlackMages player){ return true; }
     @Override
-    public boolean equipOnWhiteMage(IPlayer player){ return true; }
+    public boolean equipOnWhiteMage(WhiteMages player){ return true; }
 
     public int getMagicDamage(){
         return this.magicDamage;

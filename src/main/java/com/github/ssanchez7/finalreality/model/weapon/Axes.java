@@ -1,6 +1,8 @@
 package com.github.ssanchez7.finalreality.model.weapon;
 
+import com.github.ssanchez7.finalreality.model.character.player.Engineers;
 import com.github.ssanchez7.finalreality.model.character.player.IPlayer;
+import com.github.ssanchez7.finalreality.model.character.player.Knights;
 
 import java.util.Objects;
 
@@ -20,9 +22,9 @@ public class Axes extends AbstractWeapon{
     }
 
     @Override
-    public boolean equipOnKnight(IPlayer player){ return true; }
+    public boolean equipOnKnight(Knights player){ return true; }
     @Override
-    public boolean equipOnEngineer(IPlayer player){ return true; }
+    public boolean equipOnEngineer(Engineers player){ return true; }
 
     @Override
     public boolean equals(final Object o) {
