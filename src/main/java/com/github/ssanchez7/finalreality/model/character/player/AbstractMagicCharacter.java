@@ -3,6 +3,7 @@ package com.github.ssanchez7.finalreality.model.character.player;
 import com.github.ssanchez7.finalreality.model.character.ICharacter;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.Objects;
 import java.util.concurrent.BlockingQueue;
 
 /**
@@ -57,6 +58,11 @@ public abstract class AbstractMagicCharacter extends AbstractPlayerCharacter {
      */
     public int getManaMax(){
         return this.manaMax;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(getManaMax(), super.hashCode());
     }
 
 

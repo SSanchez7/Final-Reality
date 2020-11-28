@@ -42,6 +42,6 @@ public class Knives extends AbstractWeapon {
 
     @Override
     public int hashCode() {
-        return Objects.hash(Knives.class, getName(), getDamage(), getWeight());
+        return Objects.hash(Knives.class, super.hashCode());
     }
 }

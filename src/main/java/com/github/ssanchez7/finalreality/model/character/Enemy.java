@@ -78,7 +78,7 @@ public class Enemy extends AbstractCharacter {
 
   @Override
   public int hashCode() {
-    return Objects.hash(Enemy.class, getWeight(), getName(), getHpMax(), getDefensePoints(), getAttackPoints());
+    return Objects.hash(Enemy.class, super.hashCode(), getWeight(), getAttackPoints());
   }
 
   @Override
@@ -87,4 +87,5 @@ public class Enemy extends AbstractCharacter {
       attacked.beAttacked(this.attackPoints);
     }
   }
+
 }

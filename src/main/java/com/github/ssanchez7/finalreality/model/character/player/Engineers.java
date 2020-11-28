@@ -51,7 +51,5 @@ public class Engineers extends AbstractPlayerCharacter {
     }
 
     @Override
-    public int hashCode() {
-        return Objects.hash(Engineers.class, getName(), getHpMax(), getDefensePoints());
-    }
+    public int hashCode() { return Objects.hash(Engineers.class, super.hashCode()); }
 }

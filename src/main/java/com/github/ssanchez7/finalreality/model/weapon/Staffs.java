@@ -48,6 +48,6 @@ public class Staffs extends AbstractWeapon{
 
     @Override
     public int hashCode() {
-        return Objects.hash(Staffs.class, getName(), getDamage(), getWeight(), getMagicDamage());
+        return Objects.hash(Staffs.class, super.hashCode(), getMagicDamage());
     }
 }

@@ -55,7 +55,5 @@ public class WhiteMages extends AbstractMagicCharacter {
     }
 
     @Override
-    public int hashCode() {
-        return Objects.hash(WhiteMages.class, getName(), getHpMax(), getManaMax(), getDefensePoints());
-    }
+    public int hashCode() { return Objects.hash(WhiteMages.class, super.hashCode()); }
 }

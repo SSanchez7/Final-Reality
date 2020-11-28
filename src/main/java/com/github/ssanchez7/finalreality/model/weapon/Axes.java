@@ -40,6 +40,6 @@ public class Axes extends AbstractWeapon{
 
     @Override
     public int hashCode() {
-        return Objects.hash(Axes.class, getName(), getDamage(), getWeight());
+        return Objects.hash(Axes.class, super.hashCode());
     }
 }

@@ -51,7 +51,5 @@ public class Thieves extends AbstractPlayerCharacter {
     }
 
     @Override
-    public int hashCode() {
-        return Objects.hash(Thieves.class, getName(), getHpMax(), getDefensePoints());
-    }
+    public int hashCode() { return Objects.hash(Thieves.class, super.hashCode()); }
 }
