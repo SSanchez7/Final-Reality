@@ -346,6 +346,15 @@ class PlayerCharacterTest extends AbstractCharacterTest {
   }
 
 
+  @Test
+  void isKOTest(){
+    IPlayer character = testPlayerCharacters.get(0);
+    assertEquals(false,character.isKO());
+    character.setHp(0);
+    assertEquals(true, character.isKO());
+  }
+
+
   /**
    * Auxiliary function that tries to equip a weapon on a character
    */

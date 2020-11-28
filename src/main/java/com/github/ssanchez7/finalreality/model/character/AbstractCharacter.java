@@ -22,6 +22,7 @@ public abstract class AbstractCharacter implements ICharacter {
   protected final int hpMax;
   private final int defensePoints;
   private int hp;
+  private boolean KO;
 
   /**
    * Initialize a new Character
@@ -43,6 +44,7 @@ public abstract class AbstractCharacter implements ICharacter {
     this.hp = hpMax;
     this.hpMax = hpMax;
     this.defensePoints = defensePoints;
+    this.KO = (this.getHp()>0)? false: true;
   }
 
   /**
@@ -54,8 +56,14 @@ public abstract class AbstractCharacter implements ICharacter {
   }
 
   @Override
+  public boolean isKO(){ return this.KO; }
+
+  @Override
   public void setHp(int hp){
     this.hp = hp;
+    if (hp==0){
+      this.KO = true;
+    }
   }
 
   @Override
@@ -78,11 +86,15 @@ public abstract class AbstractCharacter implements ICharacter {
 
   @Override
   public void beAttacked(int baseDamage){
-    if (this.getHp()>0) {
+    if (!this.isKO()) {
       int damage;
-      damage = (baseDamage > this.getDefensePoints()) ? baseDamage - this.getDefensePoints() : 0;
-      damage = (damage > this.getHp()) ? this.getHp() : damage;
-      this.setHp(this.getHp() - damage);
+      if (baseDamage > this.getDefensePoints()){
+        damage = baseDamage - this.getDefensePoints();
+        if (damage >= this.getHp()) {
+          damage = this.getHp();
+        }
+        this.setHp(this.getHp() - damage);
+      }
     }
   }
 

@@ -53,4 +53,9 @@ public interface ICharacter {
    * the base damage applied to this character
    */
   void beAttacked(int baseDamage);
+
+  /**
+   * Returns true if the character is alive, false else.
+   */
+  boolean isKO();
 }

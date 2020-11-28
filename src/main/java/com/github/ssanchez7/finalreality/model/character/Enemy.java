@@ -83,7 +83,7 @@ public class Enemy extends AbstractCharacter {
 
   @Override
   public void attack(ICharacter attacked) {
-    if (this.getHp() > 0) {
+    if (!this.isKO()) {
       attacked.beAttacked(this.attackPoints);
     }
   }

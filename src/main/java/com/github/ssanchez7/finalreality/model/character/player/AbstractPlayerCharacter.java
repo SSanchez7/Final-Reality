@@ -53,7 +53,7 @@ public abstract class AbstractPlayerCharacter extends AbstractCharacter implemen
 
   @Override
   public void attack(ICharacter attacked) {
-    if (this.getHp() > 0) {
+    if (!this.isKO()) {
       int baseDamage;
       baseDamage = (this.getEquippedWeapon() != null) ? this.getEquippedWeapon().getDamage() : 1;
       attacked.beAttacked(baseDamage);
