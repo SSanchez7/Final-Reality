@@ -1,6 +1,9 @@
 package com.github.ssanchez7.finalreality.model.weapon;
 
+import com.github.ssanchez7.finalreality.model.Iitem;
 import com.github.ssanchez7.finalreality.model.character.player.*;
+
+import java.util.List;
 
 /**
  * This represents a weapon from the game.
@@ -9,7 +12,7 @@ import com.github.ssanchez7.finalreality.model.character.player.*;
  * @author Ignacio Slater Muñoz.
  * @author Samuel Sanchez Parra
  */
-public interface IWeapon {
+public interface IWeapon extends Iitem {
 
     /**
      * Returns the weapon's name.

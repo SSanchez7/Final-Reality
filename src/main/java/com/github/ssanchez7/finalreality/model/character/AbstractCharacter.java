@@ -1,9 +1,12 @@
 package com.github.ssanchez7.finalreality.model.character;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.ScheduledExecutorService;
 
+import com.github.ssanchez7.finalreality.model.Iitem;
 import com.github.ssanchez7.finalreality.model.character.player.Thieves;
 import org.jetbrains.annotations.NotNull;
 
@@ -13,7 +16,7 @@ import org.jetbrains.annotations.NotNull;
  * @author Ignacio Slater Muñoz.
  * @author Samuel Sanchez Parra
  */
-public abstract class AbstractCharacter implements ICharacter {
+public abstract class AbstractCharacter implements ICharacter, Iitem {
 
   protected ScheduledExecutorService scheduledExecutor;
 
@@ -96,6 +99,13 @@ public abstract class AbstractCharacter implements ICharacter {
     return Objects.hash(getName(), getHpMax(), getDefensePoints());
   }
 
-
+  @Override
+  public List<String> getValues(){
+    List<String> str = new ArrayList<>();
+    str.add(getName());
+    str.add(String.valueOf(getHp()));
+    str.add(String.valueOf(getDefensePoints()));
+    return str;
+  }
 
 }

@@ -1,5 +1,7 @@
 package com.github.ssanchez7.finalreality.model.character;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.Executors;
@@ -86,6 +88,14 @@ public class Enemy extends AbstractCharacter {
     if (!this.isKO()) {
       attacked.beAttacked(this.attackPoints);
     }
+  }
+
+  @Override
+  public List<String> getValues(){
+    List<String> str = super.getValues();
+    str.add(String.valueOf(getAttackPoints()));
+    str.add(String.valueOf(getWeight()));
+    return str;
   }
 
 }

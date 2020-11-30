@@ -3,6 +3,8 @@ package com.github.ssanchez7.finalreality.model.character.player;
 import com.github.ssanchez7.finalreality.model.character.AbstractCharacter;
 import com.github.ssanchez7.finalreality.model.character.ICharacter;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.Executors;
@@ -60,6 +62,11 @@ public abstract class AbstractPlayerCharacter extends AbstractCharacter implemen
     }
   }
 
-
+  @Override
+  public List<String> getValues(){
+    List<String> str = super.getValues();
+    str.add(getEquippedWeapon().getName());
+    return str;
+  }
 
 }
