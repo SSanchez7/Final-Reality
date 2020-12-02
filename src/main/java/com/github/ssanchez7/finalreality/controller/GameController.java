@@ -19,34 +19,89 @@ public class GameController {
     private Enemy[] enemies;
     private BlockingQueue<ICharacter> turnsQueue = new LinkedBlockingQueue<>();
     private Scanner entry = new Scanner(System.in);
-    private final String[] colParty = {"Name","Hp","DefensePoints","NameWeapon","Mana"};
-    private final String[] colInventory = {"Name","Damage","Weight","MagicDamage"};
-    private final String[] colEnemies = {"Name","Hp","AttackPoints","DefensePoints","Weight"};
-
 
     //Possible Players
     private List<int[]> playersStat = new ArrayList<>();
-    private int nPlayers;
+    private int nPlayers=0;
 
     //Possible Enemies
-    private int[][] enemiesStat = {
-            {600,200,40,40},{400,200,50,50},{100,400,20,20},{400,200,10,20},{300,300,20,30},
-            {150,600,70,30},{700,50,30,10},{300,700,40,50},{200,300,50,30},{500,300,60,40},{700,200,20,60}};
-    private String[] enemiesName = {"Goblin","Slime","Gnomo","Blaze","Ender","Zombie","Skeleton","Wither"};
+    private List<int[]> enemiesStat = new ArrayList<>();
+    private List<String> enemiesName = new ArrayList<>();
+    private int nEnemiesStat=0;
+    private int nEnemiesNames=0;
 
     //Inventory
     private List<IWeapon> inventory = new ArrayList<>();
-    private int nInventory;
+    private int nInventory=0;
 
     public GameController(){
-        setInventory();
-        setPlayersStat();
+        super();
     }
 
     public void playGame(){
         selectionPlayer();
         selectionEnemies();
         waitTurns();
+    }
+
+    /**
+     * Creates and adds stats of different playable character to a list of players available
+     */
+    public void createKnightStat(int hp, int defp){
+        playersStat.add(new int[]{1, hp, defp, -1});
+        nPlayers+=1;
+    }
+    public void createThiefStat(int hp, int defp){
+        playersStat.add(new int[]{2, hp, defp, -1});
+        nPlayers+=1;
+    }
+    public void createBlackMageStat(int hp, int defp, int mana){
+        playersStat.add(new int[]{3, hp, defp, mana});
+        nPlayers+=1;
+    }
+    public void createWhiteMageStat(int hp, int defp, int mana){
+        playersStat.add(new int[]{4, hp, defp, mana});
+        nPlayers+=1;
+    }
+    public void createEngineerStat(int hp, int defp){
+        playersStat.add(new int[]{5, hp, defp, -1});
+        nPlayers+=1;
+    }
+
+    /**
+     *  Creates and adds weapons to inventory
+     */
+    public void createSword(String name, int dmg, int wgt){
+        inventory.add(new Swords(name, dmg, wgt));
+        nInventory+=1;
+    }
+    public void createStaff(String name, int dmg, int wgt, int mdmg){
+        inventory.add(new Staffs(name, dmg, wgt, mdmg));
+        nInventory+=1;
+    }
+    public void createKnife(String name, int dmg, int wgt){
+        inventory.add(new Knives(name, dmg, wgt));
+        nInventory+=1;
+    }
+    public void createBow(String name, int dmg, int wgt){
+        inventory.add(new Bows(name, dmg, wgt));
+        nInventory+=1;
+    }
+    public void createAxe(String name, int dmg, int wgt){
+        inventory.add(new Axes(name, dmg, wgt));
+        nInventory+=1;
+    }
+
+    /**
+     *  Creates and adds enemies' names and stats to a different list of available.
+     */
+    public void createEnemyStat(int hp, int attk, int def, int wgt){
+        enemiesStat.add(new int[]{hp, attk, def, wgt});
+        nEnemiesStat+=1;
+    }
+    public void createEnemyName(String name){
+        enemiesName.add(name);
+        nEnemiesNames+=1;
     }
 
     public void selectionPlayer(){
@@ -85,46 +140,10 @@ public class GameController {
         int n = new Random().nextInt(8)+1;
         enemies = new Enemy[n];
         for(int i=0; i<n; i++){
-            int[] stat = enemiesStat[new Random().nextInt(enemiesStat.length)];
-            String name = enemiesName[new Random().nextInt(enemiesName.length)];
+            int[] stat = enemiesStat.get(new Random().nextInt(nEnemiesStat));
+            String name = enemiesName.get(new Random().nextInt(nEnemiesNames));
             enemies[i] = new Enemy(name,turnsQueue,stat[0],stat[1],stat[2],stat[3]);
         }
-    }
-
-    /**
-     * Set the initials weapons in the inventory
-     */
-    public void setInventory(){
-        inventory.add(new Swords("Sword1",70,60));
-        inventory.add(new Swords("Sword2", 100, 100));
-        inventory.add(new Staffs("Staff1", 50, 40, 70));
-        inventory.add(new Staffs("Staff2", 30, 20, 60));
-        inventory.add(new Axes("Axe1", 90, 80));
-        inventory.add(new Axes("Axe2", 120, 12));
-        inventory.add(new Bows("Bow1", 70, 80));
-        inventory.add(new Bows("Bow2", 90, 100));
-        inventory.add(new Knives("Knife1", 40, 20));
-        inventory.add(new Knives("Knife2", 50, 30));
-
-        this.nInventory = 10;
-    }
-
-    /**
-     * Set the initials stats available of players
-     */
-    public void setPlayersStat(){
-        playersStat.add(new int[]{1,400,150,-1});
-        playersStat.add(new int[]{1,300,250,-1});
-        playersStat.add(new int[]{2,500,50,-1});
-        playersStat.add(new int[]{2,400,150,-1});
-        playersStat.add(new int[]{3,250,250,200});
-        playersStat.add(new int[]{3,300,300,100});
-        playersStat.add(new int[]{4,400,150,150});
-        playersStat.add(new int[]{4,300,240,160});
-        playersStat.add(new int[]{5,200,350,-1});
-        playersStat.add(new int[]{5,350,200,-1});
-
-        this.nPlayers = 10;
     }
 
     /**
@@ -159,6 +178,7 @@ public class GameController {
         for (Enemy enemy : enemies) {
             enemy.waitTurn();
         }
+        System.out.println(turnsQueue.poll());
     }
 
     /**
@@ -215,14 +235,6 @@ public class GameController {
         System.out.println(div);
     }
 
-    /*public String tableFormat(int nRow, int nCol){
-        String div = "|----"+("|"+("-".repeat(16))).repeat(nCol)+"|";
-        String table = div+"\n| %-3s"+"| %-15s".repeat(nCol)+"|\n"+div+"\n";
-        table+=("| %-3d|"+" %-15s|".repeat(nCol)+"\n").repeat(nRow)+div+"\n";
-        return table;
-    }*/
-
-
     /**
      * Prints a single line of a table.
      */
@@ -260,7 +272,27 @@ public class GameController {
 
     public static void main(String[] args) {
         GameController gm = new GameController();
-        gm.playGame();
+        gm.createEnemyName("DonPepe");
+        gm.createEnemyName("ElDramas");
+        gm.createEnemyStat(10,20,30,40);
+        gm.createEnemyStat(60,10,1,1);
+        gm.createKnightStat(100,10);
+        gm.createKnightStat(100,10);
+        gm.createKnightStat(100,10);
+        gm.createKnightStat(100,10);
+        gm.createAxe("The",123,1);
+        gm.createAxe("The",123,1);
+        gm.createAxe("The",123,1);
+        gm.createAxe("The",123,1);
+        gm.showPlayers();
+        gm.showInventory();
+        gm.selectionEnemies();
+        gm.showEnemies();
+        gm.selectionPlayer();
+        gm.showParty();
+        gm.party[0].attack(gm.party[1]);
+        gm.showParty();
+        System.out.println(gm.party[1].isKO());
     }
 
 }
