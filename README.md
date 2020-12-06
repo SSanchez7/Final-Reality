@@ -54,8 +54,6 @@ Dada la etapa temprana del proyecto, en donde recien se han establecido los esqu
 * Para mantener el principio de Single Resposability, el atacante no puede acceder a los elementos del atacado, sino que es el mismo atacado quien se preocupa de manejar sus puntos de vida de acuerdo al daño base recibido mediante el metodo beAttacked().
 * Un personaje queda fuera de combate al llegar a 0 puntos.
 #### Controlador
-* Los turnos son los espacios en que el jugador esté utilizando a uno de sus personajes (seleccionando o realizando una acción) además de los momentos en los que los enemigos "decidan" qué hacer.
-* En el turno de cada personaje el jugador puede cambiar el arma o las magias de éste tantas veces como quiera, pero para terminar el turno debe atacar o utilizar un hechizo.
 * El controlador sirve de conexion logica entre la vista y el modelo, ejecuta todas las operaciones que un jugador podria querer efectuar, entrega los mensajes necesarios a cada objeto del modelo guarda la informacion mas importante del estado del juego en cada momento.
 * Al inicializarse el controlador, entre otros atributos, se genera de manera aleatoria la cantidad de enemigos (un vaor entre 1 y 8).
 * El usuario dispone de un inventario para las armas, inicialmente vacio, al cual se le pueden añadir con los metodos create por cada tipo (con limite de 30). De esta lista pueden salir y entrar armas, tal que si un personaje jugable cambia de arma, el arma desequipada vuelve al inventario y la nueva equipada sale de el.
@@ -63,6 +61,8 @@ Dada la etapa temprana del proyecto, en donde recien se han establecido los esqu
   - El metodo selectionPlayer() "traduce" la informacion del stat escogido por el jugador, crea un personaje acorde al elegido con un nombre asignado por él, lo equipa con un arma del inventario y lo agrega a la lista de la party. El stat escogido sale de la lista, tal que no pueda escogerse nuevamente.
 * De manera similiar, existen 2 listas independientes, iniciamente vacias, con nombres y stats de enemigos, a las cuales se le pueden añadir valores mediante los metodos createEnemyName() y createEnemyStat respectivamente (cada una con limite de 50). De estas listas, con el metodo selectionEnemy(), se escogen aleatoriamente dos elementos (uno dae cada una) y se crea un enemigo con los valores seleccionados
 #### Turnos
+* Los turnos son los espacios en que el jugador esté utilizando a uno de sus personajes (seleccionando o realizando una acción) además de los momentos en los que los enemigos "decidan" qué hacer.
+* Todos los personajes comparten la misma lista de turnos, por lo que cada uno tiene la capacidad de modificarla (Al cambiar de arma un player, por ejemplo, si cambia el arma, puede cambiar el peso del arma, por lo que al terminar su turno cambiara el orden que pudo hbaer sido)
 * Durante el combate se escoge al primer personaje en la lista de turnos y dependiendo si es jugable o no, actua de determinada manera. Se implemento provisoriamente como un metodo de la interfaz ICharacter que se sobreescribe de manera particular para la Clase Enemy y AbstractPlayerCharacter (la forma en que actua se implemtara en futuras entregas).
   - En el turno de cada personaje el jugador puede cambiar el arma o las magias de éste tantas veces como quiera, pero para terminar el turno debe atacar o utilizar un hechizo.
   - En el turno de cada enemigo, este realiza un ataque a un player aleatorio de la party.
