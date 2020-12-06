@@ -18,7 +18,7 @@ import org.jetbrains.annotations.NotNull;
  * @author Ignacio Slater Muñoz.
  * @author Samuel Sanchez Parra
  */
-public abstract class AbstractCharacter implements ICharacter, Iitem {
+public abstract class AbstractCharacter implements ICharacter {
 
   protected ScheduledExecutorService scheduledExecutor;
 
