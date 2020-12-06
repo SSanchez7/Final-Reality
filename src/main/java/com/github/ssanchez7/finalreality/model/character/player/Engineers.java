@@ -4,6 +4,7 @@ import com.github.ssanchez7.finalreality.model.character.ICharacter;
 import com.github.ssanchez7.finalreality.model.weapon.IWeapon;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.IllegalFormatWidthException;
 import java.util.Objects;
 import java.util.concurrent.BlockingQueue;
 
@@ -31,10 +32,12 @@ public class Engineers extends AbstractPlayerCharacter {
     }
 
     @Override
-    public void equip(IWeapon weapon) {
-        if(weapon.equipOnEngineer(this) && this.getHp()>0){
+    public boolean equip(IWeapon weapon) {
+        if(weapon.equipOnEngineer(this) && !this.isKO()){
             this.equippedWeapon = weapon;
+            return true;
         }
+        return false;
     }
     @Override
     public boolean equals(final Object o) {

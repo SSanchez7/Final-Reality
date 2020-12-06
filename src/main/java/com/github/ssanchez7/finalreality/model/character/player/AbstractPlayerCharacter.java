@@ -3,7 +3,12 @@ package com.github.ssanchez7.finalreality.model.character.player;
 import com.github.ssanchez7.finalreality.model.character.AbstractCharacter;
 import com.github.ssanchez7.finalreality.model.character.ICharacter;
 
+import java.beans.PropertyChangeListener;
+import java.beans.PropertyChangeSupport;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
+import java.util.Scanner;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
@@ -18,6 +23,8 @@ import org.jetbrains.annotations.NotNull;
  * @author Samuel Sanchez Parra
  */
 public abstract class AbstractPlayerCharacter extends AbstractCharacter implements IPlayer{
+
+  private final PropertyChangeSupport changesPlayer = new PropertyChangeSupport(this);
 
   protected IWeapon equippedWeapon = null;
 
@@ -53,13 +60,35 @@ public abstract class AbstractPlayerCharacter extends AbstractCharacter implemen
 
   @Override
   public void attack(ICharacter attacked) {
-    if (this.getHp() > 0) {
-      int baseDamage;
-      baseDamage = (this.getEquippedWeapon() != null) ? this.getEquippedWeapon().getDamage() : 1;
+    if (!this.isKO() && this.getEquippedWeapon()!=null) {
+      int baseDamage=this.getEquippedWeapon().getDamage();
       attacked.beAttacked(baseDamage);
     }
   }
 
+  @Override
+  public List<String> getValues(){
+    List<String> str = super.getValues();
+    str.add(getEquippedWeapon().getName());
+    return str;
+  }
+
+  @Override
+  public void action(){
+    System.out.print("\nTurno player: ");
+  }
+
+  @Override
+  public void addListener(PropertyChangeListener listener){
+    changesPlayer.addPropertyChangeListener(listener);
+  }
+
+  @Override
+  public void defeatedCharacter(){
+    if(this.isKO()) {
+      changesPlayer.firePropertyChange("DEFEATED_CHARACTER", null, null);
+    }
+  }
 
 
 }

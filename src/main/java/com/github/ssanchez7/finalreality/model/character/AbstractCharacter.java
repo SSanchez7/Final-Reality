@@ -1,9 +1,14 @@
 package com.github.ssanchez7.finalreality.model.character;
 
+import java.beans.PropertyChangeListener;
+import java.beans.PropertyChangeSupport;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.ScheduledExecutorService;
 
+import com.github.ssanchez7.finalreality.model.Iitem;
 import com.github.ssanchez7.finalreality.model.character.player.Thieves;
 import org.jetbrains.annotations.NotNull;
 
@@ -48,15 +53,16 @@ public abstract class AbstractCharacter implements ICharacter {
   /**
    * Adds this character to the turns queue.
    */
-  protected void addToQueue() {
+  public void addToQueue() {
     turnsQueue.add(this);
     scheduledExecutor.shutdown();
   }
 
   @Override
-  public void setHp(int hp){
-    this.hp = hp;
-  }
+  public boolean isKO(){ return this.hp == 0; }
+
+  @Override
+  public void setHp(int hp){ this.hp = hp; }
 
   @Override
   public int getHp(){
@@ -78,11 +84,15 @@ public abstract class AbstractCharacter implements ICharacter {
 
   @Override
   public void beAttacked(int baseDamage){
-    if (this.getHp()>0) {
+    if (!this.isKO()) {
       int damage;
-      damage = (baseDamage > this.getDefensePoints()) ? baseDamage - this.getDefensePoints() : 0;
-      damage = (damage > this.getHp()) ? this.getHp() : damage;
-      this.setHp(this.getHp() - damage);
+      if (baseDamage > this.getDefensePoints()){
+        damage = baseDamage - this.getDefensePoints();
+        if (damage >= this.getHp()) {
+          damage = this.getHp();
+        }
+        this.setHp(this.getHp() - damage);
+      }
     }
   }
 
@@ -91,6 +101,13 @@ public abstract class AbstractCharacter implements ICharacter {
     return Objects.hash(getName(), getHpMax(), getDefensePoints());
   }
 
-
+  @Override
+  public List<String> getValues(){
+    List<String> str = new ArrayList<>();
+    str.add(getName());
+    str.add(String.valueOf(getHp()));
+    str.add(String.valueOf(getDefensePoints()));
+    return str;
+  }
 
 }

@@ -304,14 +304,6 @@ class PlayerCharacterTest extends AbstractCharacterTest {
     assertEquals(HP_MAX, attackedChar.getHp());
     assertEquals(HP_MAX, zeroDefenseChar.getHp());
 
-    // attack without a weapon
-    attackerChar.attack(attackedChar); // 1 < defense points
-    assertEquals(HP_MAX,attackedChar.getHp());
-    attackerChar.attack(lowDefenseChar); // 1 < defense points
-    assertEquals(HP_MAX,lowDefenseChar.getHp());
-    attackerChar.attack(zeroDefenseChar); // 1 > defense points
-    assertEquals(HP_MAX-1,zeroDefenseChar.getHp());
-
     // attack with a weapon
     attackerChar.equip(weapon);
 
@@ -320,7 +312,7 @@ class PlayerCharacterTest extends AbstractCharacterTest {
     attackerChar.attack(lowDefenseChar); // weapon damage > defense points
     assertEquals(HP_MAX-(WEAPON_DAMAGE-10),lowDefenseChar.getHp());
     attackerChar.attack(zeroDefenseChar); // weapon damage > defense points
-    assertEquals((HP_MAX-1)-(WEAPON_DAMAGE),zeroDefenseChar.getHp());
+    assertEquals((HP_MAX)-(WEAPON_DAMAGE),zeroDefenseChar.getHp());
 
     // Defeated character attacks
     IPlayer defeatedChar = new Knights("defeatedKnight", turns, 0, DEFENSE_POINTS);
@@ -343,6 +335,17 @@ class PlayerCharacterTest extends AbstractCharacterTest {
     attackerChar.equip(instaKill);
     attackerChar.attack(zeroDefenseChar);
     assertEquals(0,zeroDefenseChar.getHp());
+  }
+
+  /**
+   * Check that a character is defeated if has 0 life points and is alive if not
+   */
+  @Test
+  void isKOTest(){
+    IPlayer character = testPlayerCharacters.get(0);
+    assertEquals(false,character.isKO());
+    character.setHp(0);
+    assertEquals(true, character.isKO());
   }
 
 

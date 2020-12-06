@@ -1,6 +1,9 @@
 package com.github.ssanchez7.finalreality.model.weapon;
 
-import com.github.ssanchez7.finalreality.model.character.player.IPlayer;
+import com.github.ssanchez7.finalreality.model.Iitem;
+import com.github.ssanchez7.finalreality.model.character.player.*;
+
+import java.util.List;
 
 /**
  * This represents a weapon from the game.
@@ -9,7 +12,7 @@ import com.github.ssanchez7.finalreality.model.character.player.IPlayer;
  * @author Ignacio Slater Muñoz.
  * @author Samuel Sanchez Parra
  */
-public interface IWeapon {
+public interface IWeapon extends Iitem {
 
     /**
      * Returns the weapon's name.
@@ -29,10 +32,10 @@ public interface IWeapon {
     /**
      * Returns logical value from: if the weapon can be equipped on the player.
      */
-    boolean equipOnKnight(IPlayer player);
-    boolean equipOnThief(IPlayer player);
-    boolean equipOnEngineer(IPlayer player);
-    boolean equipOnBlackMage(IPlayer player);
-    boolean equipOnWhiteMage(IPlayer player);
+    boolean equipOnKnight(Knights player);
+    boolean equipOnThief(Thieves player);
+    boolean equipOnEngineer(Engineers player);
+    boolean equipOnBlackMage(BlackMages player);
+    boolean equipOnWhiteMage(WhiteMages player);
 
 }

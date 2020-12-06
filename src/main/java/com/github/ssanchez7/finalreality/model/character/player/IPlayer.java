@@ -16,8 +16,8 @@ public interface IPlayer extends ICharacter {
     IWeapon getEquippedWeapon();
 
     /**
-     * Equip the character's weapon
+     * Equip the character's weapon and returns the dropped weapon if works, else null.
      */
-    void equip(IWeapon weapon);
+    boolean equip(IWeapon weapon);
 
 }

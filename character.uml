@@ -1,89 +1,101 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Diagram>
   <ID>JAVA</ID>
-  <OriginalElement>com.github.ssanchez7.finalreality.model.character</OriginalElement>
+  <OriginalElement>com.github.ssanchez7.finalreality</OriginalElement>
   <nodes>
-    <node x="1163.0" y="987.5">com.github.ssanchez7.finalreality.model.character.player.Thieves</node>
-    <node x="347.9999999999999" y="954.0">com.github.ssanchez7.finalreality.model.character.player.AbstractMagicCharacter</node>
-    <node x="790.25" y="0.0">com.github.ssanchez7.finalreality.model.character.ICharacter</node>
-    <node x="803.9999999999999" y="987.5">com.github.ssanchez7.finalreality.model.character.player.Engineers</node>
-    <node x="997.25" y="672.0">com.github.ssanchez7.finalreality.model.character.Enemy</node>
-    <node x="0.0" y="987.5">com.github.ssanchez7.finalreality.model.character.player.Knights</node>
-    <node x="892.0" y="258.0">com.github.ssanchez7.finalreality.model.character.AbstractCharacter</node>
-    <node x="575.2499999999999" y="1192.0">com.github.ssanchez7.finalreality.model.character.player.WhiteMages</node>
-    <node x="184.25" y="1192.0">com.github.ssanchez7.finalreality.model.character.player.BlackMages</node>
-    <node x="562.25" y="716.0">com.github.ssanchez7.finalreality.model.character.player.AbstractPlayerCharacter</node>
-    <node x="557.0" y="402.0">com.github.ssanchez7.finalreality.model.character.player.IPlayer</node>
+    <node x="621.25" y="1344.5">com.github.ssanchez7.finalreality.model.character.player.Thieves</node>
+    <node x="165.25" y="1300.0">com.github.ssanchez7.finalreality.model.character.player.AbstractMagicCharacter</node>
+    <node x="1316.25" y="1344.5">com.github.ssanchez7.finalreality.model.character.player.Engineers</node>
+    <node x="1186.0" y="908.0">com.github.ssanchez7.finalreality.model.character.Enemy</node>
+    <node x="0.0" y="1560.0">com.github.ssanchez7.finalreality.model.character.player.WhiteMages</node>
+    <node x="745.75" y="616.0">com.github.ssanchez7.finalreality.model.character.player.IPlayer</node>
+    <node x="751.0" y="952.0">com.github.ssanchez7.finalreality.model.character.player.AbstractPlayerCharacter</node>
+    <node x="1089.25" y="0.0">com.github.ssanchez7.finalreality.model.Iitem</node>
+    <node x="928.0" y="104.0">com.github.ssanchez7.finalreality.model.character.ICharacter</node>
+    <node x="968.25" y="1344.5">com.github.ssanchez7.finalreality.model.character.player.Knights</node>
+    <node x="1080.75" y="450.0">com.github.ssanchez7.finalreality.model.character.AbstractCharacter</node>
+    <node x="394.0" y="1560.0">com.github.ssanchez7.finalreality.model.character.player.BlackMages</node>
+    <node x="1219.0" y="237.0">com.github.ssanchez7.finalreality.model.weapon</node>
   </nodes>
   <notes />
   <edges>
     <edge source="com.github.ssanchez7.finalreality.model.character.Enemy" target="com.github.ssanchez7.finalreality.model.character.AbstractCharacter">
-      <point x="0.0" y="-116.0" />
-      <point x="95.75" y="182.0" />
+      <point x="0.0" y="-171.0" />
+      <point x="95.75" y="204.0" />
+    </edge>
+    <edge source="com.github.ssanchez7.finalreality.model.character.ICharacter" target="com.github.ssanchez7.finalreality.model.Iitem">
+      <point x="0.0" y="-148.0" />
+      <point x="1063.5" y="79.0" />
+      <point x="1133.25" y="79.0" />
+      <point x="-44.0" y="27.0" />
     </edge>
     <edge source="com.github.ssanchez7.finalreality.model.character.player.Knights" target="com.github.ssanchez7.finalreality.model.character.player.AbstractPlayerCharacter">
       <point x="0.0" y="-60.5" />
-      <point x="164.0" y="924.0" />
-      <point x="614.125" y="924.0" />
-      <point x="-155.625" y="72.0" />
-    </edge>
-    <edge source="com.github.ssanchez7.finalreality.model.character.player.WhiteMages" target="com.github.ssanchez7.finalreality.model.character.player.AbstractMagicCharacter">
-      <point x="0.0" y="-60.5" />
-      <point x="762.2499999999999" y="1167.0" />
-      <point x="674.9999999999999" y="1167.0" />
-      <point x="109.0" y="94.0" />
+      <point x="1132.25" y="1280.0" />
+      <point x="1010.375" y="1280.0" />
+      <point x="51.875" y="127.0" />
     </edge>
     <edge source="com.github.ssanchez7.finalreality.model.character.player.Thieves" target="com.github.ssanchez7.finalreality.model.character.player.AbstractPlayerCharacter">
       <point x="0.0" y="-60.5" />
-      <point x="1326.5" y="924.0" />
-      <point x="925.375" y="924.0" />
-      <point x="155.625" y="72.0" />
+      <point x="784.75" y="1280.0" />
+      <point x="906.625" y="1280.0" />
+      <point x="-51.875" y="127.0" />
     </edge>
     <edge source="com.github.ssanchez7.finalreality.model.character.player.AbstractPlayerCharacter" target="com.github.ssanchez7.finalreality.model.character.player.IPlayer">
-      <point x="-103.75" y="-72.0" />
+      <point x="-103.75" y="-127.0" />
       <point x="0.0" y="38.0" />
     </edge>
-    <edge source="com.github.ssanchez7.finalreality.model.character.player.Engineers" target="com.github.ssanchez7.finalreality.model.character.player.AbstractPlayerCharacter">
-      <point x="1.1368683772161603E-13" y="-60.5" />
-      <point x="973.5" y="934.0" />
-      <point x="821.625" y="934.0" />
-      <point x="51.875" y="72.0" />
-    </edge>
     <edge source="com.github.ssanchez7.finalreality.model.character.player.AbstractPlayerCharacter" target="com.github.ssanchez7.finalreality.model.character.AbstractCharacter">
-      <point x="103.75" y="-72.0" />
-      <point x="873.5" y="647.0" />
-      <point x="987.75" y="647.0" />
-      <point x="-95.75" y="182.0" />
+      <point x="103.75" y="-127.0" />
+      <point x="1062.25" y="883.0" />
+      <point x="1176.5" y="883.0" />
+      <point x="-95.75" y="204.0" />
     </edge>
     <edge source="com.github.ssanchez7.finalreality.model.character.player.AbstractMagicCharacter" target="com.github.ssanchez7.finalreality.model.character.player.AbstractPlayerCharacter">
-      <point x="0.0" y="-94.0" />
-      <point x="565.9999999999999" y="934.0" />
-      <point x="717.875" y="934.0" />
-      <point x="-51.875" y="72.0" />
+      <point x="0.0" y="-105.0" />
+      <point x="383.25" y="1270.0" />
+      <point x="802.875" y="1270.0" />
+      <point x="-155.625" y="127.0" />
     </edge>
     <edge source="com.github.ssanchez7.finalreality.model.character.player.IPlayer" target="com.github.ssanchez7.finalreality.model.character.ICharacter">
       <point x="0.0" y="-38.0" />
-      <point x="666.0" y="233.0" />
-      <point x="832.5" y="233.0" />
-      <point x="-42.25" y="104.0" />
+      <point x="854.75" y="425.0" />
+      <point x="995.75" y="425.0" />
+      <point x="-67.75" y="148.0" />
+    </edge>
+    <edge source="com.github.ssanchez7.finalreality.model.character.player.WhiteMages" target="com.github.ssanchez7.finalreality.model.character.player.AbstractMagicCharacter">
+      <point x="0.0" y="-60.5" />
+      <point x="187.0" y="1535.0" />
+      <point x="274.25" y="1535.0" />
+      <point x="-109.0" y="105.0" />
+    </edge>
+    <edge source="com.github.ssanchez7.finalreality.model.weapon" target="com.github.ssanchez7.finalreality.model.Iitem">
+      <point x="0.0" y="-15.0" />
+      <point x="1291.0" y="79.0" />
+      <point x="1221.25" y="79.0" />
+      <point x="44.0" y="27.0" />
+    </edge>
+    <edge source="com.github.ssanchez7.finalreality.model.character.player.Engineers" target="com.github.ssanchez7.finalreality.model.character.player.AbstractPlayerCharacter">
+      <point x="0.0" y="-60.5" />
+      <point x="1485.75" y="1270.0" />
+      <point x="1114.125" y="1270.0" />
+      <point x="155.625" y="127.0" />
     </edge>
     <edge source="com.github.ssanchez7.finalreality.model.character.player.BlackMages" target="com.github.ssanchez7.finalreality.model.character.player.AbstractMagicCharacter">
       <point x="0.0" y="-60.5" />
-      <point x="369.75" y="1167.0" />
-      <point x="456.9999999999999" y="1167.0" />
-      <point x="-109.0" y="94.0" />
+      <point x="579.5" y="1535.0" />
+      <point x="492.25" y="1535.0" />
+      <point x="109.0" y="105.0" />
     </edge>
     <edge source="com.github.ssanchez7.finalreality.model.character.AbstractCharacter" target="com.github.ssanchez7.finalreality.model.character.ICharacter">
-      <point x="0.0" y="-182.0" />
-      <point x="1083.5" y="233.0" />
-      <point x="917.0" y="233.0" />
-      <point x="42.25" y="104.0" />
+      <point x="0.0" y="-204.0" />
+      <point x="1272.25" y="425.0" />
+      <point x="1131.25" y="425.0" />
+      <point x="67.75" y="148.0" />
     </edge>
   </edges>
-  <settings layout="Hierarchic Group" zoom="0.6939234808702176" x="745.0" y="656.5" />
-  <SelectedNodes>
-    <node>com.github.ssanchez7.finalreality.model.character.AbstractCharacter</node>
-  </SelectedNodes>
+  <settings layout="Hierarchic Group" zoom="0.7000000000000001" x="890.2817460317461" y="640.7142857142857" />
+  <SelectedNodes />
   <Categories>
     <Category>Fields</Category>
     <Category>Constructors</Category>

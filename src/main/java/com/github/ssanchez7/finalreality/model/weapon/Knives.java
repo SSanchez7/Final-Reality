@@ -1,6 +1,9 @@
 package com.github.ssanchez7.finalreality.model.weapon;
 
+import com.github.ssanchez7.finalreality.model.character.player.BlackMages;
 import com.github.ssanchez7.finalreality.model.character.player.IPlayer;
+import com.github.ssanchez7.finalreality.model.character.player.Knights;
+import com.github.ssanchez7.finalreality.model.character.player.Thieves;
 
 import java.util.Objects;
 
@@ -20,11 +23,11 @@ public class Knives extends AbstractWeapon {
     }
 
     @Override
-    public boolean equipOnKnight(IPlayer player){ return true; }
+    public boolean equipOnKnight(Knights player){ return true; }
     @Override
-    public boolean equipOnThief(IPlayer player){ return true; }
+    public boolean equipOnThief(Thieves player){ return true; }
     @Override
-    public boolean equipOnBlackMage(IPlayer player){ return true; }
+    public boolean equipOnBlackMage(BlackMages player){ return true; }
 
     @Override
     public boolean equals(final Object o) {

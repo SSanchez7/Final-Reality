@@ -1,8 +1,5 @@
 package com.github.ssanchez7.finalreality.model.character;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotEquals;
-
 import com.github.ssanchez7.finalreality.model.character.ICharacter;
 
 import java.util.ArrayList;
@@ -10,9 +7,14 @@ import java.util.List;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
 
+import com.github.ssanchez7.finalreality.model.character.player.IPlayer;
+import com.github.ssanchez7.finalreality.model.character.player.Knights;
 import com.github.ssanchez7.finalreality.model.weapon.Axes;
 import com.github.ssanchez7.finalreality.model.weapon.IWeapon;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * Abstract class containing the common tests for all the types of characters.
