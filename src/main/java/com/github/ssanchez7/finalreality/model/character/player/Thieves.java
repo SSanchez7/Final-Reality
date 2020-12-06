@@ -33,7 +33,6 @@ public class Thieves extends AbstractPlayerCharacter {
     @Override
     public boolean equip(IWeapon weapon){
         if(weapon.equipOnThief(this) && !this.isKO()){
-            IWeapon dropped = this.equippedWeapon;
             this.equippedWeapon = weapon;
             return true;
         }

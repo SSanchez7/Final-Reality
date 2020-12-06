@@ -2,6 +2,7 @@ package com.github.ssanchez7.finalreality.model.character;
 
 import com.github.ssanchez7.finalreality.model.Iitem;
 
+import java.beans.PropertyChangeListener;
 import java.util.List;
 
 /**
@@ -63,4 +64,18 @@ public interface ICharacter extends Iitem {
    */
   boolean isKO();
 
+  /**
+   * Performs a certain action on the character's turn depending on whether it is a player or an enemy
+   */
+  void action();
+
+  /**
+   * Add a new listener for "This character is defeated?" event.
+   */
+  void addListener(PropertyChangeListener listener);
+
+  /**
+   * Notifies listeners when character is defeated
+   */
+  void defeatedCharacter();
 }

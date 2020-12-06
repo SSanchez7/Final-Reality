@@ -2,6 +2,7 @@ package com.github.ssanchez7.finalreality.gui;
 
 import com.github.ssanchez7.finalreality.model.Iitem;
 import com.github.ssanchez7.finalreality.model.character.Enemy;
+import com.github.ssanchez7.finalreality.model.character.ICharacter;
 import com.github.ssanchez7.finalreality.model.character.player.IPlayer;
 import com.github.ssanchez7.finalreality.model.weapon.IWeapon;
 
@@ -10,8 +11,16 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.List;
 import java.util.Scanner;
+import java.util.concurrent.BlockingQueue;
 
-public class ProvisorialGui {
+
+/**
+ * A provisional class for GUI.
+ *
+ * @author Ignacio Slater Muñoz.
+ * @author Samuel Sanchez Parra
+ */
+public class ProvisionalGui {
 
     // Methods that make questions to the user and return the answer. Those methods will be implemented in a new gui class.
     /**
@@ -64,15 +73,15 @@ public class ProvisorialGui {
     /**
      * Shows in a table the features of the enemy team
      */
-    public void showEnemies(Enemy[] enemies){
+    public void showEnemies(List<Enemy> enemies, int nEnemies){
         int nCol = 5;
         String div = "|----"+("|"+("-".repeat(16))).repeat(nCol)+"|";
         System.out.println(div);
         System.out.format("| %-3s"+"| %-15s".repeat(nCol)+"|\n",
                 "Id","Name","Hp","DefensePoints","AttackPoints","Weight");
         System.out.println(div);
-        for(int i=0; i<enemies.length; i++){
-            Enemy item = enemies[i];
+        for(int i=0; i<nEnemies; i++){
+            Enemy item = enemies.get(i);
             System.out.format("| %-3d|",(i+1));
             showLine(item, nCol);
         }
@@ -81,14 +90,14 @@ public class ProvisorialGui {
     /**
      * Shows in a table the members of the party and their equipment
      */
-    public void showParty(List<IPlayer> party){
+    public void showParty(List<IPlayer> party, int nParty){
         int nCol = 5;
         String div = "|----"+("|"+("-".repeat(16))).repeat(nCol)+"|";
         System.out.println(div);
         System.out.format("| %-3s"+"| %-15s".repeat(nCol)+"|\n",
                 "Id","Name","Hp","DefensePoints","NameWeapon","Mana");
         System.out.println(div);
-        for(int i=0; i<party.size(); i++){
+        for(int i=0; i<nParty; i++){
             IPlayer item = party.get(i);
             System.out.format("| %-3d|",(i+1));
             showLine(item, nCol);
@@ -127,5 +136,15 @@ public class ProvisorialGui {
                     playerClass,item[1], item[2], ((item[3]==-1)? "" : item[3]));
         }
         System.out.println(div);
+    }
+    /**
+     * Shows the list of turns.
+     */
+    public void showTurns(BlockingQueue<ICharacter> turnsQueue){
+        int nCol = 0;
+        System.out.println();
+        for(ICharacter item : turnsQueue){
+            System.out.format(" %-1s <--",item.getName());
+        }
     }
 }

@@ -33,7 +33,6 @@ public class Knights extends AbstractPlayerCharacter {
     @Override
     public boolean equip(IWeapon weapon){
         if(weapon.equipOnKnight(this) && !this.isKO()){
-            IWeapon dropped = this.getEquippedWeapon();
             this.equippedWeapon = weapon;
             return true;
         }

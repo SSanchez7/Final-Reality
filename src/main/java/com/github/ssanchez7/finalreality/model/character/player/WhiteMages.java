@@ -36,7 +36,6 @@ public class WhiteMages extends AbstractMagicCharacter {
     @Override
     public boolean equip(IWeapon weapon){
         if(weapon.equipOnWhiteMage(this) && !this.isKO()){
-            IWeapon dropped = this.equippedWeapon;
             this.equippedWeapon = weapon;
             return true;
         }

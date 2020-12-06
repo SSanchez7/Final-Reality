@@ -1,5 +1,7 @@
 package com.github.ssanchez7.finalreality.model.character;
 
+import java.beans.PropertyChangeListener;
+import java.beans.PropertyChangeSupport;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -16,6 +18,8 @@ import org.jetbrains.annotations.NotNull;
  * @author Samuel Sanchez Parra
  */
 public class Enemy extends AbstractCharacter {
+
+  private final PropertyChangeSupport changesEnemy = new PropertyChangeSupport(this);
 
   private final int weight;
   private final int attackPoints;
@@ -96,6 +100,23 @@ public class Enemy extends AbstractCharacter {
     str.add(String.valueOf(getAttackPoints()));
     str.add(String.valueOf(getWeight()));
     return str;
+  }
+
+  @Override
+  public void action(){
+    System.out.print("\nTurno enemigo: ");
+  }
+
+  @Override
+  public void addListener(PropertyChangeListener listener){
+    changesEnemy.addPropertyChangeListener(listener);
+  }
+
+  @Override
+  public void defeatedCharacter(){
+    if(this.isKO()) {
+      changesEnemy.firePropertyChange("DEFEATED_CHARACTER", null, null);
+    }
   }
 
 }

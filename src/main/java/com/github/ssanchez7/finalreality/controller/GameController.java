@@ -1,7 +1,6 @@
 package com.github.ssanchez7.finalreality.controller;
 
-import com.github.ssanchez7.finalreality.gui.ProvisorialGui;
-import com.github.ssanchez7.finalreality.model.Iitem;
+import com.github.ssanchez7.finalreality.gui.ProvisionalGui;
 import com.github.ssanchez7.finalreality.model.character.Enemy;
 import com.github.ssanchez7.finalreality.model.character.ICharacter;
 import com.github.ssanchez7.finalreality.model.character.player.*;
@@ -9,19 +8,57 @@ import com.github.ssanchez7.finalreality.model.weapon.*;
 
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
-import java.lang.reflect.Array;
 import java.util.*;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
 
-import static java.util.Arrays.asList;
-
+/**
+ * A class that holds all the information for driven the game. The Controller class.
+ *
+ * @author Ignacio Slater Muñoz.
+ * @author Samuel Sanchez Parra
+ */
 public class GameController {
+    private final TurnList turnList = new TurnList();
+    private final TurnListHandler handlerList = new TurnListHandler(this);
+    private final DefeatedPlayerHandler handlerPlayer = new DefeatedPlayerHandler(this);
+    private final DefeatedEnemyHandler handlerEnemy = new DefeatedEnemyHandler(this);
 
-    private ProvisorialGui view = new ProvisorialGui();
-    private List<IPlayer> party = new ArrayList<>();// IPlayer[4];
-    private Enemy[] enemies;
+    private ProvisionalGui view = new ProvisionalGui();
+    private List<IPlayer> party = new ArrayList<>();
+    private int nParty = 0;
+    private List<Enemy> enemies = new ArrayList<>();
+    private int nEnemies = 0;
+    private final int nMaxEnemies;
     private BlockingQueue<ICharacter> turnsQueue = new LinkedBlockingQueue<>();
+    private int nDefeatedEnemies = 0;
+    private int nDefeatedPlayers = 0;
+    private int state = 0;
+
+    /**
+     * Returns the number of defeated enemies and defeated players respectively.
+     */
+    public int getnDefeatedEnemies(){return nDefeatedEnemies;}
+    public int getnDefeatedPlayers(){return nDefeatedPlayers;}
+
+    /**
+     * Set a new number of enemies defeated and set the game state to "win" if applicable
+     */
+    public void setnDefeatedEnemies(int n){
+        nDefeatedEnemies = n;
+        if(n==nEnemies){
+            state = 1;
+        }
+    }
+    /**
+     * Set a new number of players defeated and set the game state to "lose" if applicable
+     */
+    public void setnDefeatedPlayers(int n){
+        nDefeatedPlayers = n;
+        if(n==nParty){
+            state = 2;
+        }
+    }
 
     //Possible Players
     private List<int[]> playersStat = new ArrayList<>();
@@ -39,10 +76,12 @@ public class GameController {
 
 
     public GameController(){
-        enemies = new Enemy[new Random().nextInt(8)+1];
+        nMaxEnemies = new Random().nextInt(8)+1;
+        turnList.addListener(handlerList);
     }
     public GameController(Random rng){
-        enemies = new Enemy[rng.nextInt(8)+1];
+        nMaxEnemies = rng.nextInt(8)+1;
+        turnList.addListener(handlerList);
     }
 
     /**
@@ -52,8 +91,15 @@ public class GameController {
         for(int i=0; i<4; i++){
             selectionPlayer(new BufferedReader(new InputStreamReader(System.in)));
         }
-        selectionEnemies();
-        waitTurns();
+        for(int i=0; i<nMaxEnemies; i++){
+            selectionEnemy();
+        }
+        initialWaitTurns(1000);
+        while(!(nDefeatedPlayers==nParty || nDefeatedEnemies==nEnemies)) {
+            turnIsNotEmpty(500);
+        }
+        state = (nDefeatedPlayers==4)?2:1;
+        //System.out.println((state==2)?"-------\nYOU DIED":(state==1)?"-------\nYOU WIN!!":"-------\nERROR");
     }
 
     /**
@@ -147,7 +193,7 @@ public class GameController {
     /**
      * Returns the list of enemies.
      */
-    public Enemy[] getEnemies() { return enemies; }
+    public List<Enemy> getEnemies() { return List.copyOf(enemies); }
     /**
      * Returns the list of turns from the game.
      */
@@ -176,50 +222,67 @@ public class GameController {
     public int getnEnemiesStat() { return nEnemiesStat; }
     public int getnEnemiesNames() { return nEnemiesNames; }
     public int getnInventory() { return nInventory; }
+    public int getnParty() { return nParty; }
+    public int getnEnemies() { return nEnemies; }
 
     /**
-     * Selects and creates four players from the list of stats available.
+     * Return the max number of enemies possible for the game
+     */
+    public int getnMaxEnemies() { return nMaxEnemies; }
+    /**
+     * Returns the state of the game: 0 for "in game", 1 for "victory", 2 for "defeat"
+     */
+    public int getState() { return state; }
+
+    /**
+     * Selects and creates a player from the list of stats available.
      */
     public void selectionPlayer(BufferedReader in){
-        view.showPlayers(playersStat, nPlayers);
-        String[] s = view.getIndexPlayerUser(in);
-        int indexPlayers = Integer.parseInt(s[0])-1;
-        String name = s[1];
-        int[] player = playersStat.get(indexPlayers);
-        IPlayer partyPlayer = null;
-        switch(player[0]) {
-            case 1: //Knight
-                partyPlayer = new Knights(name, turnsQueue, player[1], player[2]);
-                break;
-            case 2: //Thief
-                partyPlayer = new Thieves(name, turnsQueue, player[1], player[2]);
-                break;
-            case 3: //BlackMage
-                partyPlayer = new BlackMages(name, turnsQueue, player[1], player[2], player[3]);
-                break;
-            case 4: //WhiteMage
-                partyPlayer = new WhiteMages(name, turnsQueue, player[1], player[2], player[3]);
-                break;
-            case 5: //Engineer
-                partyPlayer = new Engineers(name, turnsQueue, player[1], player[2]);
-                break;
+        if(nParty<20) {
+            view.showPlayers(playersStat, nPlayers);
+            String[] s = view.getIndexPlayerUser(in);
+            int indexPlayers = Integer.parseInt(s[0]) - 1;
+            String name = s[1];
+            int[] player = playersStat.get(indexPlayers);
+            IPlayer partyPlayer = null;
+            switch (player[0]) {
+                case 1: //Knight
+                    partyPlayer = new Knights(name, turnsQueue, player[1], player[2]);
+                    break;
+                case 2: //Thief
+                    partyPlayer = new Thieves(name, turnsQueue, player[1], player[2]);
+                    break;
+                case 3: //BlackMage
+                    partyPlayer = new BlackMages(name, turnsQueue, player[1], player[2], player[3]);
+                    break;
+                case 4: //WhiteMage
+                    partyPlayer = new WhiteMages(name, turnsQueue, player[1], player[2], player[3]);
+                    break;
+                case 5: //Engineer
+                    partyPlayer = new Engineers(name, turnsQueue, player[1], player[2]);
+                    break;
+            }
+            equipWeapon(partyPlayer, in);
+            partyPlayer.addListener(handlerPlayer);
+            playersStat.remove(indexPlayers);
+            nPlayers -= 1;
+            nParty += 1;
+            party.add(partyPlayer);
         }
-        equipWeapon(partyPlayer, in);
-        playersStat.remove(indexPlayers);
-        nPlayers-=1;
-        party.add(partyPlayer);
-
     }
 
 
     /**
-     * Selects and creates a random number of enemies, with random stats and names from the list of available.
+     * Selects and creates an enemy, with random stats and names from the list of available.
      */
-    public void selectionEnemies(){
-        for(int i=0; i<enemies.length; i++){
+    public void selectionEnemy(){
+        if(nEnemies<20) {
             int[] stat = enemiesStat.get(new Random().nextInt(nEnemiesStat));
             String name = enemiesName.get(new Random().nextInt(nEnemiesNames));
-            enemies[i] = new Enemy(name,turnsQueue,stat[0],stat[1],stat[2],stat[3]);
+            Enemy enemy = new Enemy(name, turnsQueue, stat[0], stat[1], stat[2], stat[3]);
+            enemy.addListener(handlerEnemy);
+            enemies.add(enemy);
+            nEnemies += 1;
         }
     }
 
@@ -241,41 +304,66 @@ public class GameController {
             }
             inventory.remove(indexInventory);
             nInventory-=1;
-            //System.out.println("*** Success ***\n");
         }else{
             //Exceptions
-            //System.out.println("--- Error ---\n");
         }
     }
 
     /**
-     * Returns the list of weapon of the inventory.
+     * Attacks from a character to another.
+     * @param attacker:
+     *                character that attacks
+     * @param defender:
+     *                character that receives the attack
      */
-    public void waitTurns(){
-        for(IPlayer player: party){
-            player.waitTurn();
-        }
-        for (Enemy enemy : enemies){
-            enemy.waitTurn();
+    public void attack(ICharacter attacker, ICharacter defender){
+        if(!defender.isKO()) {
+            attacker.attack(defender);
+            defender.defeatedCharacter();
         }
     }
 
-    /*public static void main(String[] args) {
-        GameController gm = new GameController();
-        gm.createEnemyName("DonPepe");
-        gm.createEnemyName("ElDramas");
-        gm.createEnemyStat(10,20,30,40);
-        gm.createEnemyStat(60,10,1,1);
-        gm.createKnightStat(100,10);
-        gm.createKnightStat(100,10);
-        gm.createKnightStat(100,10);
-        gm.createKnightStat(100,10);
-        gm.createAxe("The",123,1);
-        gm.createAxe("The",123,1);
-        gm.createAxe("The",123,1);
-        gm.createAxe("The",123,1);
-        //gm.playGame();
+    /**
+     * Puts all characters in the turn list
+     */
+    public void initialWaitTurns(int mSecSleep){
+        try {
+            for (IPlayer player : party) {
+                player.waitTurn();
+            }
+            for (Enemy enemy : enemies) {
+                enemy.waitTurn();
+            }
+            Thread.sleep(mSecSleep);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+    }
 
-    }*/
+    /**
+     * Perform a certain action on a character's turn according to its type only
+     * when the turn list contains an item.
+     * @param mSecSleep:
+     *                 wait time in milliseconds between turns.
+     */
+    public void turnIsNotEmpty(int mSecSleep){
+        try {
+            turnList.turnIsNotEmpty(turnsQueue);
+            Thread.sleep(mSecSleep);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+    }
+
+    /**
+     * starts the character's turn by performing an action and ends
+     * it by putting him back on hold for the turn list.
+     * @param character:
+     *                 character with the turn.
+     */
+    public void characterTurn(ICharacter character){
+        character.action(); //Starts turn
+        character.waitTurn(); //Ends turn
+    }
 
 }
