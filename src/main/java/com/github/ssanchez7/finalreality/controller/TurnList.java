@@ -20,12 +20,12 @@ public class TurnList {
     }
 
     /**
-     * Notifies listeners when the turn list is empty and the first character is not defeated.
+     * Notifies listeners when the turn list is not empty and the first character is not defeated.
      */
     public void turnIsNotEmpty(BlockingQueue<ICharacter> turns){
         if (!turns.isEmpty()) {
             ICharacter character = turns.poll();
-            if(!character.isKO()){
+            if (!character.isKO()) {
                 p.firePropertyChange("WAIT_TURN", null, character);
             }
         }

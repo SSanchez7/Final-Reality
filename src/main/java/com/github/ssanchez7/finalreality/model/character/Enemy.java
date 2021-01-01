@@ -103,20 +103,18 @@ public class Enemy extends AbstractCharacter {
   }
 
   @Override
-  public void action(){
-    System.out.print("\nTurno enemigo: ");
-  }
-
-  @Override
   public void addListener(PropertyChangeListener listener){
     changesEnemy.addPropertyChangeListener(listener);
   }
 
   @Override
-  public void defeatedCharacter(){
+  public void isDefeatedCharacter(){
     if(this.isKO()) {
-      changesEnemy.firePropertyChange("DEFEATED_CHARACTER", null, null);
+      changesEnemy.firePropertyChange("DEFEATED_ENEMY", null, null);
     }
   }
+
+  @Override
+  public boolean isEnemy(){return true;}
 
 }

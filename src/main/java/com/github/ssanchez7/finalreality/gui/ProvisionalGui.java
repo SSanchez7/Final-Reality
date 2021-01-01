@@ -121,7 +121,7 @@ public class ProvisionalGui {
     /**
      * Shows the different playable characters available.
      */
-    public void showPlayers(List<int[]> playersStat, int nPlayers){
+    public void showPlayers(List<String[]> playersStat, int nPlayers){
         int nCol = 4;
         String div = "|----"+("|"+("-".repeat(16))).repeat(nCol)+"|";
         System.out.println(div);
@@ -129,11 +129,11 @@ public class ProvisionalGui {
                 "Id","Class","Hp","DefensePoints","Mana");
         System.out.println(div);
         for(int i=0; i<nPlayers; i++){
-            int[] item = playersStat.get(i);
-            String playerClass = (item[0]==1)? "Knight": (item[0]==2)? "Thief": (item[0]==3)? "BlackMage": (item[0]==4)? "WhiteMage": "Engineer" ;
+            String[] item = playersStat.get(i);
+            String playerClass = item[1];
             System.out.format("| %-3d|",(i+1));
             System.out.format(" %-15s|".repeat(4)+"\n",
-                    playerClass,item[1], item[2], ((item[3]==-1)? "" : item[3]));
+                    playerClass,item[2], item[3], ((item[4]==null)? "" : item[4]));
         }
         System.out.println(div);
     }

@@ -1,5 +1,6 @@
-package com.github.ssanchez7.finalreality.controller;
+package com.github.ssanchez7.finalreality.controller.handlers;
 
+import com.github.ssanchez7.finalreality.controller.GameController;
 import com.github.ssanchez7.finalreality.model.character.ICharacter;
 
 import java.beans.PropertyChangeEvent;

@@ -1,10 +1,26 @@
 package com.github.ssanchez7.finalreality.gui;
 
+import com.github.ssanchez7.finalreality.controller.GameController;
+import com.github.ssanchez7.finalreality.controller.exceptions.InvalidEquipmentException;
+import com.github.ssanchez7.finalreality.controller.exceptions.InvalidTransitionException;
+import com.github.ssanchez7.finalreality.model.character.ICharacter;
+import com.github.ssanchez7.finalreality.model.character.player.IPlayer;
+
+import javafx.animation.AnimationTimer;
 import javafx.application.Application;
-import javafx.geometry.Pos;
+
+import javafx.scene.Group;
+import javafx.scene.Node;
 import javafx.scene.Scene;
+import javafx.scene.control.*;
+import javafx.scene.control.Button;
 import javafx.scene.control.Label;
+import javafx.scene.control.TextField;
+import javafx.scene.text.Font;
 import javafx.stage.Stage;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Main entry point for the application.
@@ -12,9 +28,32 @@ import javafx.stage.Stage;
  * <Complete here with the details of the implemented application>
  *
  * @author Ignacio Slater Muñoz.
- * @author <Your name>
+ * @author Samuel Sanchez Parra
  */
 public class FinalReality extends Application {
+
+  private final GameController controller = new GameController();
+  private final Group root = new Group();
+
+  private List<RadioButton> buttonListPlayer = new ArrayList<>();
+  private List<RadioButton> buttonListWeapon = new ArrayList<>();
+  private List<Label> labelPlayerList = new ArrayList<>();
+  private List<Label> labelEnemyList = new ArrayList<>();
+
+  final ToggleGroup playerListGroup = new ToggleGroup();
+  final ToggleGroup weaponListGroup = new ToggleGroup();
+
+  private final Group selectionPlayer = new Group();
+  private final Group selectionWeapon = new Group();
+  private final Group turns = new Group();
+  private final Group changeWeapon = new Group();
+
+  private final TextField name = createTextField(selectionPlayer,80, controller.getnPlayers()*30+40);
+  private final Button chooseWeapon = createButton(selectionWeapon, 400, controller.getnInventory()*30+40);
+  private final Label playing = createLabel(turns, 10,280);
+  private boolean endTurn = true;
+
+
 
   public static void main(String[] args) {
     launch(args);
@@ -23,14 +62,241 @@ public class FinalReality extends Application {
   @Override
   public void start(Stage primaryStage) {
     primaryStage.setTitle("Final reality");
-
-    Label label = new Label("This will be a game sometime");
-    label.setAlignment(Pos.CENTER);
-
-    // This sets the size of the Scene to be 400px wide, 200px high
-    Scene scene = new Scene(label, 400, 200);
+    primaryStage.setResizable(false);
+    Scene scene = createScene();
     primaryStage.setScene(scene);
-
     primaryStage.show();
+
+  }
+
+  private Scene createScene() {
+    Scene scene = new Scene(root, 1280, 720);
+    showSelectionPlayer();
+    showSelectionWeapon(selectionWeapon);
+    root.getChildren().add(selectionPlayer);
+    startAnimator();
+    return scene;
+  }
+
+  private void startAnimator() {
+    AnimationTimer timer = new AnimationTimer() {
+      @Override
+      public void handle(long now) {
+        if(controller.isInSelectionPlayerPhase()){
+          startAnimatorSelectionPlayer();
+        }
+        if(controller.isInSelectionWeaponPhase()){
+          startAnimatorSelectionWeapon();
+        }
+        if(controller.isInTurnsPhase() && endTurn){
+          startAnimatorTurns();
+        }
+      }
+    };
+    timer.start();
+  }
+
+
+  private void startAnimatorSelectionPlayer(){
+    List<String[]> players = controller.getPlayersStat();
+    for (int i = 0; i < controller.getnPlayers(); i++) {
+      RadioButton button = buttonListPlayer.get(i);
+      String[] item = players.get(i);
+      String str = String.format("%-3d|" + (" %-15s|".repeat(4)),
+              (i + 1), item[1], item[2], item[3], ((item[4] == null) ? "" : item[4]));
+      button.setText(str);
+    }
+    if(controller.getnParty()==5){
+      for(int i=0; i<controller.getnMaxEnemies(); i++) {
+        controller.selectionEnemy();
+      }
+      controller.initialWaitTurns(400);
+      showTurns();
+      root.getChildren().remove(selectionPlayer);
+      root.getChildren().add(turns);
+      controller.toTurnsPhase();
+    }
+  }
+
+  private void startAnimatorSelectionWeapon(){
+    for(int i=0; i<controller.getnInventory();i++){
+      RadioButton button = buttonListWeapon.get(i);
+      List<String> item = controller.getValues(controller.getInventory().get(i));
+      String str = String.format("%-3d|",(i+1));
+      for(String s : item){
+        str += String.format(" %-15s|",s);
+      }
+      button.setText(str);
+    }
+  }
+
+  private void startAnimatorTurns(){
+    for(int i=0; i<controller.getnParty();i++){
+      Label label = labelPlayerList.get(i);
+      List<String> item = controller.getValues(controller.getParty().get(i));
+      String str = String.format("%-3d|",(i+1));
+      for(String s : item){
+        str += String.format(" %-15s|",s);
+      }
+      label.setText(str);
+    }
+    for(int i=0; i<controller.getnEnemies();i++){
+      Label label = labelEnemyList.get(i);
+      List<String> item = controller.getValues(controller.getEnemies().get(i));
+      String str = String.format("%-3d|",(i+1));
+      for(String s : item){
+        str += String.format(" %-15s|",s);
+      }
+      label.setText(str);
+    }
+    controller.turnIsNotEmpty(0);
+    endTurn = false;
+    ICharacter character = controller.getActualCharacter();
+    playing.setText("Playing... "+character.getValues().get(0));
+
+    /*if(controller.isEnemy(character)){
+      controller.toEnemyTurnPhase();
+      controller.randomEnemyAttack(character);
+      endTurn = true;
+      controller.toTurnsPhase();
+    }else{
+      controller.toPlayerTurnPhase();
+      endTurn = true;
+    }*/
+  }
+
+  private Label createLabel(Group group, int xPos, int yPos) {
+    Label label = new Label();
+    label.setLayoutX(xPos);
+    label.setLayoutY(yPos);
+    group.getChildren().add(label);
+    return label;
+  }
+
+  private TextField createTextField(Group group, int xPos, int yPos) {
+    TextField text = new TextField();
+    text.setLayoutX(xPos);
+    text.setLayoutY(yPos);
+    group.getChildren().add(text);
+    return text;
+  }
+
+  private Button createButton(Group group, int xPos, int yPos) {
+    Button button = new Button();
+    button.setLayoutX(xPos);
+    button.setLayoutY(yPos);
+    group.getChildren().add(button);
+    return button;
+  }
+
+  private RadioButton createRadioButton(Group group, ToggleGroup toggleGroup, int xPos, int yPos) {
+    RadioButton radioButton = new RadioButton();
+    radioButton.setLayoutX(xPos);
+    radioButton.setLayoutY(yPos);
+    radioButton.setToggleGroup(toggleGroup);
+    group.getChildren().add(radioButton);
+    return radioButton;
+  }
+
+  private void showSelectionPlayer(){
+    Label titleLabel = createLabel(selectionPlayer,30, 10);
+    titleLabel.setText(String.format("%-3s" + "| %-15s".repeat(4) + "|\n",
+            "Id", "Class", "Hp", "DefensePoints", "Mana"));
+    titleLabel.setFont(Font.font("consolas"));
+    for (int i = 0; i < controller.getnPlayers(); i++) {
+      RadioButton button = createRadioButton(selectionPlayer, playerListGroup, 10, 40 + 30 * i);
+      button.setFont(Font.font("consolas"));
+      buttonListPlayer.add(button);
+    }
+    buttonListPlayer.get(0).setSelected(true);
+    Button choosePlayer = createButton(selectionPlayer, 400, controller.getnPlayers()*30+40);
+    choosePlayer.setText("Choose Player");
+    Label insertName = createLabel(selectionPlayer,10,controller.getnPlayers()*30+40);
+    insertName.setText("Insert Name");
+    choosePlayer.setOnAction(event -> {
+      chooseAPlayer();
+    });
+  }
+
+  private void showSelectionWeapon(Group group){
+    Label titleLabel = createLabel(group,30, 10);
+    titleLabel.setText(String.format("%-3s"+"| %-15s".repeat(4)+"|\n",
+            "Id","Name","Damage","Weight","MagicDamage"));
+    titleLabel.setFont(Font.font("consolas"));
+    for (int i = 0; i < controller.getnInventory(); i++) {
+      RadioButton button = createRadioButton(group, weaponListGroup, 10, 40 + 30 * i);
+      button.setFont(Font.font("consolas"));
+      buttonListWeapon.add(button);
+    }
+    buttonListWeapon.get(0).setSelected(true);
+    chooseWeapon.setText("Choose Weapon");
+  }
+
+  private void showTurns(){
+    Label playerLabel = createLabel(turns,10, 10);
+    playerLabel.setText(String.format("%-3s" + "| %-15s".repeat(5) + "|\n",
+            "Id","Name","Hp","DefensePoints","NameWeapon","Mana"));
+    playerLabel.setFont(Font.font("consolas"));
+    for (int i = 0; i < controller.getnParty(); i++) {
+      Label label = createLabel(turns, 10, 40 + 30 * i);
+      label.setFont(Font.font("consolas"));
+      labelPlayerList.add(label);
+    }
+
+    Label enemyLabel = createLabel(turns,650, 10);
+    enemyLabel.setText(String.format("%-3s" + "| %-15s".repeat(5) + "|\n",
+            "Id","Name","Hp","DefensePoints","AttackPoints","Weight"));
+    enemyLabel.setFont(Font.font("consolas"));
+    System.out.println(controller.getnEnemies());
+    for (int i = 0; i < controller.getnEnemies(); i++) {
+      Label label = createLabel(turns, 650, 40 + 30 * i);
+      label.setFont(Font.font("consolas"));
+      labelEnemyList.add(label);
+    }
+    Button chooseWeapon = createButton(turns, 300, controller.getnParty()*30+40);
+    chooseWeapon.setText("Change Weapon");
+    chooseWeapon.setOnAction(event -> {
+      root.getChildren().remove(turns);
+      root.getChildren().add(selectionWeapon);
+    });
+
+    Button attack = createButton(turns, 500, controller.getnParty()*30+40);
+    attack.setText("Attack");
+    attack.setOnAction(event -> {
+    });
+
+    playing.setFont(Font.font("consolas",20));
+  }
+
+  private void chooseAPlayer(){
+    try {
+      int k = Character.getNumericValue((((RadioButton) playerListGroup.getSelectedToggle()).getText()).charAt(0)) - 1;
+      IPlayer player = controller.selectionPlayer(k, name.getText());
+      selectionPlayer.getChildren().remove(buttonListPlayer.get(controller.getnPlayers() - 1 + 1));
+      name.setText("");
+      chooseWeapon.setOnAction(event -> {
+        chooseAWeapon(player);
+      });
+      root.getChildren().remove(selectionPlayer);
+      root.getChildren().add(selectionWeapon);
+      controller.canChooseAWeapon();
+    }catch (InvalidTransitionException e){
+      e.printStackTrace();
+    }
+  }
+
+  private void chooseAWeapon(IPlayer player){
+    try {
+      int k = Character.getNumericValue((((RadioButton) weaponListGroup.getSelectedToggle()).getText()).charAt(0)) - 1;
+      controller.equipWeapon(player, k);
+      selectionWeapon.getChildren().remove(buttonListWeapon.get(controller.getnInventory() - 1 + 1));
+      root.getChildren().remove(selectionWeapon);
+      root.getChildren().add(selectionPlayer);
+      controller.canChooseAPlayer();
+    }catch (InvalidEquipmentException e){
+      e.printStackTrace();
+    }
   }
 }
+
+

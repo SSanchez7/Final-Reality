@@ -65,11 +65,6 @@ public interface ICharacter extends Iitem {
   boolean isKO();
 
   /**
-   * Performs a certain action on the character's turn depending on whether it is a player or an enemy
-   */
-  void action();
-
-  /**
    * Add a new listener for "This character is defeated?" event.
    */
   void addListener(PropertyChangeListener listener);
@@ -77,5 +72,10 @@ public interface ICharacter extends Iitem {
   /**
    * Notifies listeners when character is defeated
    */
-  void defeatedCharacter();
+  void isDefeatedCharacter();
+
+  /**
+   * Returns true if the character is a enemy, false else.
+   */
+  boolean isEnemy();
 }

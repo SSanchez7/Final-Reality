@@ -1,13 +1,20 @@
 package com.github.ssanchez7.finalreality.controller;
 
+import com.github.ssanchez7.finalreality.controller.exceptions.InvalidEquipmentException;
+import com.github.ssanchez7.finalreality.controller.exceptions.InvalidMovementException;
+import com.github.ssanchez7.finalreality.controller.exceptions.InvalidTransitionException;
+import com.github.ssanchez7.finalreality.controller.handlers.*;
+import com.github.ssanchez7.finalreality.controller.phases.Phase;
+import com.github.ssanchez7.finalreality.controller.phases.SelectionPlayerPhase;
+import com.github.ssanchez7.finalreality.gui.FinalReality;
 import com.github.ssanchez7.finalreality.gui.ProvisionalGui;
+import com.github.ssanchez7.finalreality.model.Iitem;
 import com.github.ssanchez7.finalreality.model.character.Enemy;
 import com.github.ssanchez7.finalreality.model.character.ICharacter;
+import com.github.ssanchez7.finalreality.model.character.NullCharacter;
 import com.github.ssanchez7.finalreality.model.character.player.*;
 import com.github.ssanchez7.finalreality.model.weapon.*;
 
-import java.io.BufferedReader;
-import java.io.InputStreamReader;
 import java.util.*;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
@@ -31,9 +38,18 @@ public class GameController {
     private int nEnemies = 0;
     private final int nMaxEnemies;
     private BlockingQueue<ICharacter> turnsQueue = new LinkedBlockingQueue<>();
+
+    private Phase phase;
+
     private int nDefeatedEnemies = 0;
     private int nDefeatedPlayers = 0;
     private int state = 0;
+
+    private ICharacter actualCharacter = new NullCharacter();
+
+    public ICharacter getActualCharacter() {
+        return actualCharacter;
+    }
 
     /**
      * Returns the number of defeated enemies and defeated players respectively.
@@ -60,8 +76,9 @@ public class GameController {
         }
     }
 
+
     //Possible Players
-    private List<int[]> playersStat = new ArrayList<>();
+    private List<String[]> playersStat = new ArrayList<>();
     private int nPlayers=0;
 
     //Possible Enemies
@@ -78,18 +95,60 @@ public class GameController {
     public GameController(){
         nMaxEnemies = new Random().nextInt(8)+1;
         turnList.addListener(handlerList);
+        this.setPhase(new SelectionPlayerPhase());
+
+        createKnightStat(30, 100);
+        createThiefStat(20, 140);
+        createBlackMageStat(25, 130, 30);
+        createEngineerStat(15, 60);
+        createWhiteMageStat(10, 40, 20);
+        createWhiteMageStat(10, 40, 20);
+        createThiefStat(20, 140);
+        createBlackMageStat(25, 130, 30);
+        createWhiteMageStat(10, 40, 20);
+        createThiefStat(20, 140);
+        createBlackMageStat(25, 130, 30);
+
+        createAxe("AXE", 130,40);
+        createKnife("KNIFE", 75,12);
+        createStaff("STAFF1", 664, 21,98);
+        createAxe("AXE", 140, 20);
+        createStaff("STAFF2", 664, 21,98);
+        createSword("SWORD", 123,40);
+        createBow("BOW", 123,67);
+        createStaff("STAFF2", 664, 21,98);
+        createBow("BOW", 123,10);
+
+        createEnemyName("Goblin");
+        createEnemyName("Spider");
+        createEnemyName("Ghost");
+        createEnemyName("Skeleton");
+        createEnemyName("Zombie");
+
+        createEnemyStat(10,130,120,50);
+        createEnemyStat(50,100,100,56);
+        createEnemyStat(187,40,160,23);
+        createEnemyStat(123,90,60,80);
+        createEnemyStat(53,70,190,20);
+        createEnemyStat(90,127,40,40);
+
+
+
     }
     public GameController(Random rng){
         nMaxEnemies = rng.nextInt(8)+1;
         turnList.addListener(handlerList);
     }
 
-    /**
-     * Run the game.
-     */
-    public void playGame(){
+    public void setPhase(Phase phase){
+        this.phase = phase;
+        phase.setController(this);
+    }
+
+
+    /*public void playGame(){
         for(int i=0; i<4; i++){
-            selectionPlayer(new BufferedReader(new InputStreamReader(System.in)));
+            selectionPlayer();
         }
         for(int i=0; i<nMaxEnemies; i++){
             selectionEnemy();
@@ -99,39 +158,39 @@ public class GameController {
             turnIsNotEmpty(500);
         }
         state = (nDefeatedPlayers==4)?2:1;
-        //System.out.println((state==2)?"-------\nYOU DIED":(state==1)?"-------\nYOU WIN!!":"-------\nERROR");
-    }
+
+    }*/
 
     /**
      * Creates and adds stats of different playable character to a list of players available
      */
     public void createKnightStat(int hp, int def){
         if(nPlayers<50){
-            playersStat.add(new int[]{1, hp, def, -1});
+            playersStat.add(new String[]{"1", "Knight", String.valueOf(hp), String.valueOf(def), null});
             nPlayers += 1;
         }
     }
     public void createThiefStat(int hp, int def){
         if(nPlayers<50){
-            playersStat.add(new int[]{2, hp, def, -1});
+            playersStat.add(new String[]{"2", "Thief", String.valueOf(hp), String.valueOf(def), null});
             nPlayers += 1;
         }
     }
     public void createBlackMageStat(int hp, int def, int mana){
         if(nPlayers<50){
-            playersStat.add(new int[]{3, hp, def, mana});
+            playersStat.add(new String[]{"3", "BlackMage", String.valueOf(hp), String.valueOf(def), String.valueOf(mana)});
             nPlayers += 1;
         }
     }
     public void createWhiteMageStat(int hp, int def, int mana){
         if(nPlayers<50){
-            playersStat.add(new int[]{4, hp, def, mana});
+            playersStat.add(new String[]{"4", "WhiteMage", String.valueOf(hp), String.valueOf(def), String.valueOf(mana)});
             nPlayers += 1;
         }
     }
     public void createEngineerStat(int hp, int def){
         if(nPlayers<50){
-            playersStat.add(new int[]{5, hp, def, -1});
+            playersStat.add(new String[]{"5", "Engineer", String.valueOf(hp), String.valueOf(def), null});
             nPlayers += 1;
         }
     }
@@ -201,7 +260,7 @@ public class GameController {
     /**
      * Returns the list of available player stats.
      */
-    public List<int[]> getPlayersStat() { return List.copyOf(playersStat); }
+    public List<String[]> getPlayersStat() { return List.copyOf(playersStat); }
     /**
      * Returns the list of available enemies stats.
      */
@@ -237,38 +296,36 @@ public class GameController {
     /**
      * Selects and creates a player from the list of stats available.
      */
-    public void selectionPlayer(BufferedReader in){
-        if(nParty<20) {
-            view.showPlayers(playersStat, nPlayers);
-            String[] s = view.getIndexPlayerUser(in);
-            int indexPlayers = Integer.parseInt(s[0]) - 1;
-            String name = s[1];
-            int[] player = playersStat.get(indexPlayers);
-            IPlayer partyPlayer = null;
-            switch (player[0]) {
-                case 1: //Knight
-                    partyPlayer = new Knights(name, turnsQueue, player[1], player[2]);
-                    break;
-                case 2: //Thief
-                    partyPlayer = new Thieves(name, turnsQueue, player[1], player[2]);
-                    break;
-                case 3: //BlackMage
-                    partyPlayer = new BlackMages(name, turnsQueue, player[1], player[2], player[3]);
-                    break;
-                case 4: //WhiteMage
-                    partyPlayer = new WhiteMages(name, turnsQueue, player[1], player[2], player[3]);
-                    break;
-                case 5: //Engineer
-                    partyPlayer = new Engineers(name, turnsQueue, player[1], player[2]);
-                    break;
-            }
-            equipWeapon(partyPlayer, in);
-            partyPlayer.addListener(handlerPlayer);
-            playersStat.remove(indexPlayers);
-            nPlayers -= 1;
-            nParty += 1;
-            party.add(partyPlayer);
+    public IPlayer selectionPlayer(int indexPlayer, String name) throws InvalidTransitionException {
+        String[] player = playersStat.get(indexPlayer);
+        IPlayer partyPlayer = null;
+        switch (Integer.parseInt(player[0])) {
+            case 1: //Knight
+                partyPlayer = new Knights(name, turnsQueue, Integer.parseInt(player[2]), Integer.parseInt(player[3]));
+                break;
+            case 2: //Thief
+                partyPlayer = new Thieves(name, turnsQueue, Integer.parseInt(player[2]), Integer.parseInt(player[3]));
+                break;
+            case 3: //BlackMage
+                partyPlayer = new BlackMages(name, turnsQueue, Integer.parseInt(player[2]), Integer.parseInt(player[3]), Integer.parseInt(player[4]));
+                break;
+            case 4: //WhiteMage
+                partyPlayer = new WhiteMages(name, turnsQueue, Integer.parseInt(player[2]), Integer.parseInt(player[3]), Integer.parseInt(player[4]));
+                break;
+            case 5: //Engineer
+                partyPlayer = new Engineers(name, turnsQueue, Integer.parseInt(player[2]), Integer.parseInt(player[3]));
+                break;
         }
+        if(partyPlayer==null){
+            throw new InvalidTransitionException("Incorrect player");
+        }
+        partyPlayer.addListener(handlerPlayer);
+        playersStat.remove(indexPlayer);
+        nPlayers -= 1;
+        nParty += 1;
+        party.add(partyPlayer);
+
+        return partyPlayer;
     }
 
 
@@ -286,15 +343,14 @@ public class GameController {
         }
     }
 
+
+
     /**
      * Equips a user selected weapon on a playable character
      * @param player:
      *       playable character who receives the weapon.
      */
-    public void equipWeapon(IPlayer player, BufferedReader in) {
-        view.showInventory(inventory, nInventory);
-        String s = view.getIndexInventoryUser(player.getName(), in);
-        int indexInventory = Integer.parseInt(s) - 1;
+    public void equipWeapon(IPlayer player, int indexInventory) throws InvalidEquipmentException{
         IWeapon chosenWeapon = inventory.get(indexInventory);
         IWeapon droppedWeapon = player.getEquippedWeapon();
         if (player.equip(chosenWeapon)) { //Successful weapon equipment
@@ -304,8 +360,8 @@ public class GameController {
             }
             inventory.remove(indexInventory);
             nInventory-=1;
-        }else{
-            //Exceptions
+        }else {
+            throw new InvalidEquipmentException("The weapon '"+chosenWeapon.getName()+"' can't be equipped on '"+player.getName()+"'");
         }
     }
 
@@ -319,8 +375,13 @@ public class GameController {
     public void attack(ICharacter attacker, ICharacter defender){
         if(!defender.isKO()) {
             attacker.attack(defender);
-            defender.defeatedCharacter();
+            defender.isDefeatedCharacter();
         }
+    }
+
+    public void randomEnemyAttack(ICharacter attacker){
+        int defender = (new Random()).nextInt(getnParty());
+        attack(attacker, getParty().get(defender));
     }
 
     /**
@@ -362,8 +423,88 @@ public class GameController {
      *                 character with the turn.
      */
     public void characterTurn(ICharacter character){
-        character.action(); //Starts turn
-        character.waitTurn(); //Ends turn
+        try {
+            this.actualCharacter = character;
+            phase.characterTurn(character);
+            character.waitTurn();
+        }catch (InvalidMovementException e){
+            e.printStackTrace();
+        }
     }
+
+    public List<String> getValues(Iitem item){ return item.getValues(); }
+    public boolean isEnemy(ICharacter character){return character.isEnemy();}
+
+    public void toSelectionWeaponPhase(){
+        try {
+            phase.toSelectionWeaponPhase();
+        }catch (InvalidTransitionException e){
+            e.printStackTrace();
+        }
+    }
+
+    public void toTurnsPhase() {
+        try{
+            phase.toTurnsPhase();
+        }catch (InvalidTransitionException e){
+            e.printStackTrace();
+        }
+    }
+
+    public void toPlayerTurnPhase(){
+        try{
+            phase.toPlayerTurnPhase();
+        } catch (InvalidTransitionException e){
+            e.printStackTrace();
+        }
+    }
+
+    public void toSelectionPlayerPhase() {
+        try{
+            phase.toSelectionPlayerPhase();
+        } catch (InvalidTransitionException e){
+            e.printStackTrace();
+        }
+    }
+
+    public void toEnemyTurnPhase() {
+        try{
+            phase.toEnemyTurnPhase();
+        }catch (InvalidTransitionException e){
+            e.printStackTrace();
+        }
+    }
+
+    public void toSelectionAttackPhase() {
+        try{
+            phase.toSelectionAttackPhase();
+        }catch (InvalidTransitionException e){
+            e.printStackTrace();
+        }
+    }
+
+    public boolean isInSelectionPlayerPhase(){return phase.isInSelectionPlayerPhase();}
+    public boolean isInSelectionWeaponPhase(){return phase.isInSelectionWeaponPhase();}
+    public boolean isInTurnsPhase() {return phase.isInTurnsPhase();}
+    public boolean isInPlayerTurnPhase() {return phase.isInPlayerTurnPhase();}
+
+
+    public void canChooseAWeapon() {
+        try {
+            phase.canChooseAWeapon();
+        }catch (InvalidMovementException e){
+            e.printStackTrace();
+        }
+    }
+
+    public void canChooseAPlayer() {
+        try{
+            phase.canChooseAPlayer();
+        }catch (InvalidMovementException e){
+            e.printStackTrace();
+        }
+    }
+
+
 
 }
