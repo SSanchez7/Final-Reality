@@ -31,13 +31,13 @@ public class GameController {
     private final DefeatedPlayerHandler handlerPlayer = new DefeatedPlayerHandler(this);
     private final DefeatedEnemyHandler handlerEnemy = new DefeatedEnemyHandler(this);
 
-    private ProvisionalGui view = new ProvisionalGui();
-    private List<IPlayer> party = new ArrayList<>();
+    private final List<IPlayer> party = new ArrayList<>();
+    private final List<IPlayer> party_copy = new ArrayList<>();
     private int nParty = 0;
-    private List<Enemy> enemies = new ArrayList<>();
+    private final List<Enemy> enemies = new ArrayList<>();
     private int nEnemies = 0;
     private final int nMaxEnemies;
-    private BlockingQueue<ICharacter> turnsQueue = new LinkedBlockingQueue<>();
+    private final BlockingQueue<ICharacter> turnsQueue = new LinkedBlockingQueue<>();
 
     private Phase phase;
 
@@ -74,6 +74,16 @@ public class GameController {
         if(n==nParty){
             state = 2;
         }
+    }
+
+    public boolean isInGame(){
+        return !(isWin() || isLose());
+    }
+    public boolean isWin(){
+        return nDefeatedEnemies==nEnemies;
+    }
+    public boolean isLose(){
+        return nDefeatedPlayers==nParty;
     }
 
 
@@ -144,22 +154,6 @@ public class GameController {
         this.phase = phase;
         phase.setController(this);
     }
-
-
-    /*public void playGame(){
-        for(int i=0; i<4; i++){
-            selectionPlayer();
-        }
-        for(int i=0; i<nMaxEnemies; i++){
-            selectionEnemy();
-        }
-        initialWaitTurns(1000);
-        while(!(nDefeatedPlayers==nParty || nDefeatedEnemies==nEnemies)) {
-            turnIsNotEmpty(500);
-        }
-        state = (nDefeatedPlayers==4)?2:1;
-
-    }*/
 
     /**
      * Creates and adds stats of different playable character to a list of players available
@@ -324,10 +318,9 @@ public class GameController {
         nPlayers -= 1;
         nParty += 1;
         party.add(partyPlayer);
-
+        party_copy.add(partyPlayer);
         return partyPlayer;
     }
-
 
     /**
      * Selects and creates an enemy, with random stats and names from the list of available.
@@ -343,23 +336,24 @@ public class GameController {
         }
     }
 
-
-
     /**
-     * Equips a user selected weapon on a playable character
+     * Equips a user selected weapon on a playable character ans returns true if the dropped weapon is null
      * @param player:
      *       playable character who receives the weapon.
      */
-    public void equipWeapon(IPlayer player, int indexInventory) throws InvalidEquipmentException{
+    public boolean equipWeapon(IPlayer player, int indexInventory) throws InvalidEquipmentException{
+        boolean v = true;
         IWeapon chosenWeapon = inventory.get(indexInventory);
         IWeapon droppedWeapon = player.getEquippedWeapon();
         if (player.equip(chosenWeapon)) { //Successful weapon equipment
             if (droppedWeapon != null) {
                 inventory.add(droppedWeapon);
                 nInventory+=1;
+                v = false;
             }
             inventory.remove(indexInventory);
             nInventory-=1;
+            return v;
         }else {
             throw new InvalidEquipmentException("The weapon '"+chosenWeapon.getName()+"' can't be equipped on '"+player.getName()+"'");
         }
@@ -379,10 +373,16 @@ public class GameController {
         }
     }
 
-    public void randomEnemyAttack(ICharacter attacker){
-        int defender = (new Random()).nextInt(getnParty());
-        attack(attacker, getParty().get(defender));
+    public void tryAttack(ICharacter attacker, ICharacter defender) throws InvalidMovementException{
+        phase.attack(attacker, defender);
     }
+
+    public void randomEnemyAttack(ICharacter attacker) throws InvalidMovementException{
+        IPlayer defender = party_copy.get((new Random()).nextInt(party_copy.size()));
+        tryAttack(attacker, defender);
+    }
+
+
 
     /**
      * Puts all characters in the turn list
@@ -407,7 +407,7 @@ public class GameController {
      * @param mSecSleep:
      *                 wait time in milliseconds between turns.
      */
-    public void turnIsNotEmpty(int mSecSleep){
+    public void nextTurn(int mSecSleep){
         try {
             turnList.turnIsNotEmpty(turnsQueue);
             Thread.sleep(mSecSleep);
@@ -425,8 +425,7 @@ public class GameController {
     public void characterTurn(ICharacter character){
         try {
             this.actualCharacter = character;
-            phase.characterTurn(character);
-            character.waitTurn();
+            phase.toCharacterTurn(character);
         }catch (InvalidMovementException e){
             e.printStackTrace();
         }
@@ -483,10 +482,20 @@ public class GameController {
         }
     }
 
+    public void toEndPhase() {
+        try{
+            phase.toEndPhase();
+        }catch (InvalidTransitionException e){
+            e.printStackTrace();
+        }
+    }
+
     public boolean isInSelectionPlayerPhase(){return phase.isInSelectionPlayerPhase();}
     public boolean isInSelectionWeaponPhase(){return phase.isInSelectionWeaponPhase();}
     public boolean isInTurnsPhase() {return phase.isInTurnsPhase();}
     public boolean isInPlayerTurnPhase() {return phase.isInPlayerTurnPhase();}
+    public boolean isInEnemyTurnPhase() {return phase.isInEnemyTurnPhase();}
+    public boolean isInSelectionAttackPhase() {return phase.isInSelectionAttackPhase();}
 
 
     public void canChooseAWeapon() {
@@ -505,6 +514,19 @@ public class GameController {
         }
     }
 
+    public void canAttack() {
+        try{
+            phase.canAttack();
+        }catch (InvalidMovementException e){
+            e.printStackTrace();
+        }
+    }
 
+    public void removePlayerCopy(IPlayer player) {
+        party_copy.remove(player);
+    }
 
+    public Phase getPhase() {
+        return phase;
+    }
 }

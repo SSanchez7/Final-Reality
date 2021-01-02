@@ -110,7 +110,7 @@ public class Enemy extends AbstractCharacter {
   @Override
   public void isDefeatedCharacter(){
     if(this.isKO()) {
-      changesEnemy.firePropertyChange("DEFEATED_ENEMY", null, null);
+      changesEnemy.firePropertyChange("DEFEATED_ENEMY", null, this);
     }
   }
 

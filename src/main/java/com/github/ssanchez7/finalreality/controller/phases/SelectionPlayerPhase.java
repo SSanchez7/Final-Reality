@@ -2,6 +2,7 @@ package com.github.ssanchez7.finalreality.controller.phases;
 
 import com.github.ssanchez7.finalreality.controller.exceptions.InvalidMovementException;
 import com.github.ssanchez7.finalreality.controller.exceptions.InvalidTransitionException;
+import com.github.ssanchez7.finalreality.model.character.ICharacter;
 
 public class SelectionPlayerPhase extends Phase{
 
@@ -10,7 +11,9 @@ public class SelectionPlayerPhase extends Phase{
     }
 
     @Override
-    public void toSelectionWeaponPhase(){ this.changePhase(new SelectionWeaponPhase()); }
+    public void toSelectionWeaponPhase(){
+        this.changePhase(new SelectionWeaponPhase());
+    }
 
     @Override
     public void toTurnsPhase(){
@@ -27,4 +30,5 @@ public class SelectionPlayerPhase extends Phase{
         super.canChooseAWeapon();
         toSelectionWeaponPhase();
     }
+
 }

@@ -81,7 +81,7 @@ public abstract class AbstractPlayerCharacter extends AbstractCharacter implemen
   @Override
   public void isDefeatedCharacter(){
     if(this.isKO()) {
-      changesPlayer.firePropertyChange("DEFEATED_PLAYER", null, null);
+      changesPlayer.firePropertyChange("DEFEATED_PLAYER", null, this);
     }
   }
 

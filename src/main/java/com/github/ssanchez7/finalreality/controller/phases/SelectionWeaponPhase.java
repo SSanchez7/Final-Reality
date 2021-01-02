@@ -10,13 +10,11 @@ public class SelectionWeaponPhase extends Phase{
     }
 
     @Override
-    public void toSelectionPlayerPhase(){
-        this.changePhase(new SelectionPlayerPhase());
-    }
+    public void toSelectionPlayerPhase(){ this.changePhase(new SelectionPlayerPhase()); }
 
     @Override
-    public void toSelectionAttackPhase(){
-        this.changePhase(new SelectionAttackPhase());
+    public void toPlayerTurnPhase(){
+        this.changePhase(new PlayerTurnPhase());
     }
 
     @Override

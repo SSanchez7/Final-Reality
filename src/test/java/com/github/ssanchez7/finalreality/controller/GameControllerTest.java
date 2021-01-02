@@ -367,20 +367,20 @@ class GameControllerTest {
         ICharacter[] characterList = {knight, enemy, thief, knight, null};
         for(ICharacter character : characterList) {
             assertEquals(character, gm.getTurnsQueue().peek());
-            gm.turnIsNotEmpty(500);
+            gm.nextTurn(500);
         }
         assertEquals(0, gm.getState());
         assertTrue(gm.getTurnsQueue().peek().equals(knight) || gm.getTurnsQueue().peek().equals(enemy));
         if(gm.getTurnsQueue().peek().equals(enemy)){
-            gm.turnIsNotEmpty(500);
+            gm.nextTurn(500);
             assertEquals(knight, gm.getTurnsQueue().peek());
             // turns change with a equipment change
             gm.equipWeapon((IPlayer) gm.getTurnsQueue().peek(), new BufferedReader(new StringReader("1\n\n")));
-            gm.turnIsNotEmpty(500);
+            gm.nextTurn(500);
 
             assertNotEquals(null, gm.getTurnsQueue().peek());
             assertEquals(knight, gm.getTurnsQueue().peek());
-            gm.turnIsNotEmpty(500);
+            gm.nextTurn(500);
         }
         assertEquals(0, gm.getState());
         try{
@@ -389,7 +389,7 @@ class GameControllerTest {
             assertTrue(gm.getEnemies().get(0).isKO());
             assertEquals(1,gm.getnDefeatedEnemies());
             for(int i=0; i<6; i++){
-                gm.turnIsNotEmpty(500);
+                gm.nextTurn(500);
             }
             Thread.sleep(3000);
             assertEquals(2, gm.getTurnsQueue().size());
@@ -418,7 +418,7 @@ class GameControllerTest {
             assertTrue(gm.getEnemies().get(0).isKO());
             assertEquals(1,gm.getnDefeatedEnemies());
             for(int i=0; i<4; i++){
-                gm.turnIsNotEmpty(500);
+                gm.nextTurn(500);
             }
             Thread.sleep(1000);
             assertEquals(1, gm.getState());
@@ -445,7 +445,7 @@ class GameControllerTest {
             assertTrue(gm.getParty().get(0).isKO());
             assertEquals(1,gm.getnDefeatedPlayers());
             for(int i=0; i<4; i++){
-                gm.turnIsNotEmpty(500);
+                gm.nextTurn(500);
             }
             Thread.sleep(1000);
             assertEquals(2, gm.getState());

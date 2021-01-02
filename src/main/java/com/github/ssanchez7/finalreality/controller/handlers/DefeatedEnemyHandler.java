@@ -1,6 +1,8 @@
 package com.github.ssanchez7.finalreality.controller.handlers;
 
 import com.github.ssanchez7.finalreality.controller.GameController;
+import com.github.ssanchez7.finalreality.model.character.Enemy;
+import com.github.ssanchez7.finalreality.model.character.player.IPlayer;
 
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;

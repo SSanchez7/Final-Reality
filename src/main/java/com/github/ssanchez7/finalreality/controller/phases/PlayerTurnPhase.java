@@ -1,20 +1,39 @@
 package com.github.ssanchez7.finalreality.controller.phases;
 
+import com.github.ssanchez7.finalreality.controller.exceptions.InvalidMovementException;
 import com.github.ssanchez7.finalreality.model.character.ICharacter;
 
 public class PlayerTurnPhase extends Phase {
 
-    @Override
-    public void toSelectionAttackPhase(){ this.changePhase(new SelectionAttackPhase()); }
+    public PlayerTurnPhase(){
+        canAttack = true;
+        canChooseWeapon = true;
+    }
 
     @Override
-    public void toSelectionWeaponPhase(){ this.changePhase(new SelectionWeaponPhase()); }
+    public void toSelectionAttackPhase(){
+        this.changePhase(new SelectionAttackPhase());
+    }
+
+    @Override
+    public void toSelectionWeaponPhase(){
+        this.changePhase(new SelectionWeaponPhase());
+    }
 
     @Override
     public boolean isInPlayerTurnPhase(){return true;}
 
     @Override
-    public void characterTurn(ICharacter character){
-        System.out.println("Playeeeeer");
+    public void canAttack() throws InvalidMovementException {
+        super.canAttack();
+        toSelectionAttackPhase();
     }
+
+    @Override
+    public void canChooseAWeapon() throws InvalidMovementException {
+        super.canChooseAWeapon();
+        toSelectionWeaponPhase();
+    }
+
+
 }
