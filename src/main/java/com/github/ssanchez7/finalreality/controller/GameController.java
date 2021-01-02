@@ -4,10 +4,8 @@ import com.github.ssanchez7.finalreality.controller.exceptions.InvalidEquipmentE
 import com.github.ssanchez7.finalreality.controller.exceptions.InvalidMovementException;
 import com.github.ssanchez7.finalreality.controller.exceptions.InvalidTransitionException;
 import com.github.ssanchez7.finalreality.controller.handlers.*;
+import com.github.ssanchez7.finalreality.controller.phases.DrawTitlePhase;
 import com.github.ssanchez7.finalreality.controller.phases.Phase;
-import com.github.ssanchez7.finalreality.controller.phases.SelectionPlayerPhase;
-import com.github.ssanchez7.finalreality.gui.FinalReality;
-import com.github.ssanchez7.finalreality.gui.ProvisionalGui;
 import com.github.ssanchez7.finalreality.model.Iitem;
 import com.github.ssanchez7.finalreality.model.character.Enemy;
 import com.github.ssanchez7.finalreality.model.character.ICharacter;
@@ -105,7 +103,7 @@ public class GameController {
     public GameController(){
         nMaxEnemies = new Random().nextInt(8)+1;
         turnList.addListener(handlerList);
-        this.setPhase(new SelectionPlayerPhase());
+        this.setPhase(new DrawTitlePhase());
 
         createKnightStat(30, 100);
         createThiefStat(20, 140);
@@ -382,8 +380,6 @@ public class GameController {
         tryAttack(attacker, defender);
     }
 
-
-
     /**
      * Puts all characters in the turn list
      */
@@ -432,7 +428,7 @@ public class GameController {
     }
 
     public List<String> getValues(Iitem item){ return item.getValues(); }
-    public boolean isEnemy(ICharacter character){return character.isEnemy();}
+
 
     public void toSelectionWeaponPhase(){
         try {
@@ -526,7 +522,7 @@ public class GameController {
         party_copy.remove(player);
     }
 
-    public Phase getPhase() {
-        return phase;
+    public List<String> getWeaponValues(IPlayer player){
+        return player.getEquippedWeapon().getValues();
     }
 }

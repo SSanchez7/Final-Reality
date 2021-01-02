@@ -49,6 +49,7 @@ public class FinalReality extends Application {
     private final Group selectionWeapon = new Group();
     private final Group selectionEnemy = new Group();
     private final Group turns = new Group();
+    private final Group title = new Group();
 
     private final TextField name = createTextField(selectionPlayer,80, controller.getnPlayers()*30+40);
     private final Button chooseWeapon = new Button(); //Button in selectionWeapon
@@ -58,6 +59,7 @@ public class FinalReality extends Application {
     private final Button attack = new Button();
     private final Label playing = createLabel(turns, 10,280);
     private final Label finalMsg = createLabel(turns, 500,500);
+    private final Label infoWeapon = createLabel(turns, 10,250);
 
 
     public static void main(String[] args) {
@@ -76,11 +78,18 @@ public class FinalReality extends Application {
 
     private Scene createScene() {
         Scene scene = new Scene(root, 1280, 720);
-        showSelectionPlayer();
-        showSelectionWeapon(selectionWeapon);
-        root.getChildren().add(selectionPlayer);
 
-        startAnimator();
+        root.getChildren().add(title);
+        Button start = createButton(title, 500,500);
+        start.setText("START");
+        start.setOnAction(event -> {
+            showSelectionPlayer();
+            showSelectionWeapon(selectionWeapon);
+            root.getChildren().remove(title);
+            root.getChildren().add(selectionPlayer);
+            controller.toSelectionPlayerPhase();
+            startAnimator();
+        });
         return scene;
     }
 
@@ -174,9 +183,12 @@ public class FinalReality extends Application {
             controller.nextTurn(0);
             ICharacter character = controller.getActualCharacter();
             playing.setText("Playing... " + character.getValues().get(0));
+
+
             if(controller.isInPlayerTurnPhase()) {
                 attack.setDisable(false);
                 changeWeapon.setDisable(false);
+                actualWeapon((IPlayer) character);
             }
             changeWeapon.setOnAction(event -> {
                 root.getChildren().remove(turns);
@@ -187,6 +199,7 @@ public class FinalReality extends Application {
                         chooseAWeapon((IPlayer) character, turns);
                         controller.toPlayerTurnPhase();
                         startAnimatorBattle();
+                        actualWeapon((IPlayer) character);
                     }catch (InvalidEquipmentException e){
                         e.printStackTrace();
                     }
@@ -195,7 +208,6 @@ public class FinalReality extends Application {
             attack.setOnAction(event -> {
                 root.getChildren().remove(turns);
                 root.getChildren().add(selectionEnemy);
-                System.out.println(controller.getPhase());
                 controller.canAttack();
                 chooseEnemy.setOnAction(event2 -> {
                     chooseAnEnemy((IPlayer) character);
@@ -222,9 +234,15 @@ public class FinalReality extends Application {
             if(controller.isLose()){
                 finalMsg.setText("YOU DIED");
             }
-
-
         }
+    }
+    private void actualWeapon(IPlayer character){
+        List<String> item = controller.getWeaponValues(character);
+        String str = "|";
+        for (String s : item) {
+            str += String.format(" %-15s|", s);
+        }
+        infoWeapon.setText(str);
     }
 
     private void startAnimatorSelectionEnemy() {
@@ -282,7 +300,7 @@ public class FinalReality extends Application {
 
     private void showTurns(){
         Label playerLabel = createLabel(turns,10, 10);
-        playerLabel.setText(String.format("%-3s" + "| %-15s".repeat(5) + "|\n",
+        playerLabel.setText(String.format("PARTY:\n"+"%-3s" + "| %-15s".repeat(5) + "|\n",
                 "Id","Name","Hp","DefensePoints","NameWeapon","Mana"));
         playerLabel.setFont(Font.font("consolas"));
         for (int i = 0; i < controller.getnParty(); i++) {
@@ -292,7 +310,7 @@ public class FinalReality extends Application {
         }
 
         Label enemyLabel = createLabel(turns,650, 10);
-        enemyLabel.setText(String.format("%-3s" + "| %-15s".repeat(5) + "|\n",
+        enemyLabel.setText(String.format("ENEMIES_\n"+"%-3s" + "| %-15s".repeat(5) + "|\n",
                 "Id","Name","Hp","DefensePoints","AttackPoints","Weight"));
         enemyLabel.setFont(Font.font("consolas"));
         System.out.println(controller.getnEnemies());
@@ -301,6 +319,13 @@ public class FinalReality extends Application {
             label.setFont(Font.font("consolas"));
             labelEnemyList.add(label);
         }
+
+        Label titleLabel = createLabel(turns,10, 220);
+        titleLabel.setText(String.format("ACTUAL EQUIPPED WEAPON:\n"+"| %-15s".repeat(4)+"|\n",
+                "Name","Damage","Weight","MagicDamage"));
+        titleLabel.setFont(Font.font("consolas"));
+        infoWeapon.setFont(Font.font("consolas"));
+
         changeWeapon.setText("Change Weapon");
         changeWeapon.setLayoutX(300);
         changeWeapon.setLayoutY(controller.getnParty()*30+40);
