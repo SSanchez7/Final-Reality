@@ -25,7 +25,7 @@ import java.util.List;
 /**
  * Main entry point for the application.
  * <p>
- * <Complete here with the details of the implemented application>
+ * GUI for the game FINAL REALITY, that shows all information for a correct gameplay
  *
  * @author Ignacio Slater Muñoz.
  * @author Samuel Sanchez Parra
@@ -35,27 +35,38 @@ public class FinalReality extends Application {
     private final GameController controller = new GameController();
     private final Group root = new Group();
 
+    /**
+     *  List of Radio Button for player, weapon and enemies and theirs ToggleGroup respectively.
+     */
     private List<RadioButton> buttonListPlayer = new ArrayList<>();
     private List<RadioButton> buttonListWeapon = new ArrayList<>();
     private List<RadioButton> buttonListEnemy = new ArrayList<>();
-    private List<Label> labelPlayerList = new ArrayList<>();
-    private List<Label> labelEnemyList = new ArrayList<>();
-
     private final ToggleGroup playerListGroup = new ToggleGroup();
     private final ToggleGroup weaponListGroup = new ToggleGroup();
     private final ToggleGroup enemyListGroup = new ToggleGroup();
 
+    /**
+     * List of players of the party and enemies for the battle "scene"
+     */
+    private List<Label> labelPlayerList = new ArrayList<>();
+    private List<Label> labelEnemyList = new ArrayList<>();
+
+    /**
+     * Groups that holds items for selection player, selection weapon, selection enemiy, battle, and title "scenes" respectively.
+     */
     private final Group selectionPlayer = new Group();
     private final Group selectionWeapon = new Group();
     private final Group selectionEnemy = new Group();
     private final Group turns = new Group();
     private final Group title = new Group();
 
+    /**
+     * Buttons, Labels and Text Field that need to be known throughout the class
+     */
     private final TextField name = createTextField(selectionPlayer,80, controller.getnPlayers()*30+40);
     private final Button chooseWeapon = new Button(); //Button in selectionWeapon
     private final Button chooseEnemy = new Button(); //Button in selectionEnemy
     private final Button changeWeapon = new Button(); //Button in turns
-
     private final Button attack = new Button();
     private final Label playing = createLabel(turns, 10,280);
     private final Label finalMsg = createLabel(turns, 500,500);
@@ -76,10 +87,16 @@ public class FinalReality extends Application {
 
     }
 
+    /**
+     * Create the scene and shows the info for a "title phase"
+     */
     private Scene createScene() {
         Scene scene = new Scene(root, 1280, 720);
 
         root.getChildren().add(title);
+        Label titleLabel = createLabel(title, 250,100);
+        titleLabel.setFont(Font.font("consolas",100));
+        titleLabel.setText("Final Reality");
         Button start = createButton(title, 500,500);
         start.setText("START");
         start.setOnAction(event -> {
@@ -93,6 +110,9 @@ public class FinalReality extends Application {
         return scene;
     }
 
+    /**
+     * Starts the Animator with the information depending on the phase
+     */
     private void startAnimator() {
         AnimationTimer timer = new AnimationTimer() {
             @Override
@@ -115,7 +135,9 @@ public class FinalReality extends Application {
         timer.start();
     }
 
-
+    /**
+     * Animator for a Selection Player phase, update information from the list of available players stats.
+     */
     private void startAnimatorSelectionPlayer(){
         List<String[]> players = controller.getPlayersStat();
         for (int i = 0; i < controller.getnPlayers(); i++) {
@@ -138,6 +160,9 @@ public class FinalReality extends Application {
         }
     }
 
+    /**
+     * Animator for a Selection Weapon phase, update information from the list of weapons from the inventory.
+     */
     private void startAnimatorSelectionWeapon(){
         for(int i=0; i<controller.getnInventory();i++){
             RadioButton button = buttonListWeapon.get(i);
@@ -150,6 +175,9 @@ public class FinalReality extends Application {
         }
     }
 
+    /**
+     * Animator for a turns phase, update information from the list of players of the party an enemies.
+     */
     private void startAnimatorBattle() {
         for (int i = 0; i < controller.getnParty(); i++) {
             Label label = labelPlayerList.get(i);
@@ -176,12 +204,16 @@ public class FinalReality extends Application {
             label.setText(str);
         }
     }
+
+    /**
+     * Animator for a turns phase, update information of actual character turn.
+     */
     private void startAnimatorTurns(){
         attack.setDisable(true);
         changeWeapon.setDisable(true);
         if(controller.isInGame()) {
             controller.nextTurn(0);
-            ICharacter character = controller.getActualCharacter();
+            ICharacter character = controller.getCurrentCharacter();
             playing.setText("Playing... " + character.getValues().get(0));
 
 
@@ -236,6 +268,10 @@ public class FinalReality extends Application {
             }
         }
     }
+
+    /**
+     * shows info of the character equipped weapon in the turns phase.
+     */
     private void actualWeapon(IPlayer character){
         List<String> item = controller.getWeaponValues(character);
         String str = "|";
@@ -245,6 +281,9 @@ public class FinalReality extends Application {
         infoWeapon.setText(str);
     }
 
+    /**
+     * Animator for a Selection Attack phase, update information from the list of enemies.
+     */
     private void startAnimatorSelectionEnemy() {
         for(int i=0; i<controller.getnEnemies();i++){
             RadioButton button = buttonListEnemy.get(i);
@@ -260,6 +299,9 @@ public class FinalReality extends Application {
         }
     }
 
+    /**
+     * Shows information of the player selection (list of players, button and textField for the player name)
+     */
     private void showSelectionPlayer(){
         Label titleLabel = createLabel(selectionPlayer,30, 10);
         titleLabel.setText(String.format("%-3s" + "| %-15s".repeat(4) + "|\n",
@@ -280,6 +322,9 @@ public class FinalReality extends Application {
         });
     }
 
+    /**
+     * Shows information of the weapon selection (list of weapons and a button to choose it)
+     */
     private void showSelectionWeapon(Group group){
         Label titleLabel = createLabel(group,30, 10);
         titleLabel.setText(String.format("%-3s"+"| %-15s".repeat(4)+"|\n",
@@ -298,6 +343,10 @@ public class FinalReality extends Application {
         selectionWeapon.getChildren().add(chooseWeapon);
     }
 
+
+    /**
+     * Shows information of the battle (list of players of the party, list of enemies and buttons for change the weapon and attack)
+     */
     private void showTurns(){
         Label playerLabel = createLabel(turns,10, 10);
         playerLabel.setText(String.format("PARTY:\n"+"%-3s" + "| %-15s".repeat(5) + "|\n",
@@ -310,7 +359,7 @@ public class FinalReality extends Application {
         }
 
         Label enemyLabel = createLabel(turns,650, 10);
-        enemyLabel.setText(String.format("ENEMIES_\n"+"%-3s" + "| %-15s".repeat(5) + "|\n",
+        enemyLabel.setText(String.format("ENEMIES:\n"+"%-3s" + "| %-15s".repeat(5) + "|\n",
                 "Id","Name","Hp","DefensePoints","AttackPoints","Weight"));
         enemyLabel.setFont(Font.font("consolas"));
         System.out.println(controller.getnEnemies());
@@ -338,6 +387,9 @@ public class FinalReality extends Application {
         playing.setFont(Font.font("consolas",20));
     }
 
+    /**
+     * Shows information of the enemy selection for attack (list of enemies and a button for choose it)
+     */
     private void showSelectionEnemy(){
         Label enemyLabel = createLabel(selectionEnemy,30, 10);
         enemyLabel.setText(String.format("%-3s" + "| %-15s".repeat(5) + "|\n",
@@ -356,6 +408,9 @@ public class FinalReality extends Application {
         selectionEnemy.getChildren().add(chooseEnemy);
     }
 
+    /**
+     * selects the chosen player and change to the selectionWeapon "scene"
+     */
     private void chooseAPlayer() {
         try {
             int k = Character.getNumericValue((((RadioButton) playerListGroup.getSelectedToggle()).getText()).charAt(0)) - 1;
@@ -378,6 +433,9 @@ public class FinalReality extends Application {
         }
     }
 
+    /**
+     * equips the chosen weapon and change to the "group" "scene"
+     */
     private void chooseAWeapon(IPlayer player, Group group) throws InvalidEquipmentException{
         int k = Character.getNumericValue((((RadioButton) weaponListGroup.getSelectedToggle()).getText()).charAt(0)) - 1;
         if(controller.equipWeapon(player, k)) {
@@ -387,6 +445,9 @@ public class FinalReality extends Application {
         root.getChildren().add(group);
     }
 
+    /**
+     * attacks the chosen enemy and change to the turns "scene"
+     */
     private void chooseAnEnemy(IPlayer player){
         try {
             int k = Character.getNumericValue((((RadioButton) enemyListGroup.getSelectedToggle()).getText()).charAt(0)) - 1;
@@ -398,6 +459,16 @@ public class FinalReality extends Application {
         }
     }
 
+    /**
+     * create a label
+     * @param group:
+     *             group to which it belongs
+     * @param xPos:
+     *            position in the X axis
+     * @param yPos:
+     *            position in the Y axis
+     * @return the label created.
+     */
     private Label createLabel(Group group, int xPos, int yPos) {
         Label label = new Label();
         label.setLayoutX(xPos);
@@ -406,6 +477,16 @@ public class FinalReality extends Application {
         return label;
     }
 
+    /**
+     * create a Text Field
+     * @param group:
+     *             group to which it belongs
+     * @param xPos:
+     *            position in the X axis
+     * @param yPos:
+     *            position in the Y axis
+     * @return the text field created.
+     */
     private TextField createTextField(Group group, int xPos, int yPos) {
         TextField text = new TextField();
         text.setLayoutX(xPos);
@@ -414,6 +495,16 @@ public class FinalReality extends Application {
         return text;
     }
 
+    /**
+     * create a button
+     * @param group:
+     *             group to which it belongs
+     * @param xPos:
+     *            position in the X axis
+     * @param yPos:
+     *            position in the Y axis
+     * @return the button created.
+     */
     private Button createButton(Group group, int xPos, int yPos) {
         Button button = new Button();
         button.setLayoutX(xPos);
@@ -422,6 +513,18 @@ public class FinalReality extends Application {
         return button;
     }
 
+    /**
+     * create a radio button
+     * @param group:
+     *             group to which it belongs
+     * @param toggleGroup:
+     *             group of radio buttons to which it belongs
+     * @param xPos:
+     *            position in the X axis
+     * @param yPos:
+     *            position in the Y axis
+     * @return the radio button created.
+     */
     private RadioButton createRadioButton(Group group, ToggleGroup toggleGroup, int xPos, int yPos) {
         RadioButton radioButton = new RadioButton();
         radioButton.setLayoutX(xPos);

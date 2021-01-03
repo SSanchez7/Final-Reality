@@ -1,7 +1,6 @@
 package com.github.ssanchez7.finalreality.controller.phases;
 
 import com.github.ssanchez7.finalreality.controller.exceptions.InvalidMovementException;
-import com.github.ssanchez7.finalreality.model.character.ICharacter;
 
 public class PlayerTurnPhase extends Phase {
 

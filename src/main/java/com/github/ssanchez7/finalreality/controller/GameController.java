@@ -24,66 +24,46 @@ import java.util.concurrent.LinkedBlockingQueue;
  * @author Samuel Sanchez Parra
  */
 public class GameController {
+
+    /**
+     * Manage the turn List changes
+     */
     private final TurnList turnList = new TurnList();
+
+    /**
+     * Handlers that receives notifies from a change in TurnList, defeatedPlayer and DefeatedEnemy respectively
+     */
     private final TurnListHandler handlerList = new TurnListHandler(this);
     private final DefeatedPlayerHandler handlerPlayer = new DefeatedPlayerHandler(this);
     private final DefeatedEnemyHandler handlerEnemy = new DefeatedEnemyHandler(this);
 
+    /**
+     * team of players of the user, their copy and their number.
+     */
     private final List<IPlayer> party = new ArrayList<>();
     private final List<IPlayer> party_copy = new ArrayList<>();
     private int nParty = 0;
+
+    /**
+     * Equip of enemies, their number and the max number possible respectively.
+     */
     private final List<Enemy> enemies = new ArrayList<>();
     private int nEnemies = 0;
     private final int nMaxEnemies;
     private final BlockingQueue<ICharacter> turnsQueue = new LinkedBlockingQueue<>();
 
+    /**
+     * Phase of the game.
+     */
     private Phase phase;
 
+    /**
+     * Number of Enemies and Players defeated respectively.
+     */
     private int nDefeatedEnemies = 0;
     private int nDefeatedPlayers = 0;
-    private int state = 0;
 
-    private ICharacter actualCharacter = new NullCharacter();
-
-    public ICharacter getActualCharacter() {
-        return actualCharacter;
-    }
-
-    /**
-     * Returns the number of defeated enemies and defeated players respectively.
-     */
-    public int getnDefeatedEnemies(){return nDefeatedEnemies;}
-    public int getnDefeatedPlayers(){return nDefeatedPlayers;}
-
-    /**
-     * Set a new number of enemies defeated and set the game state to "win" if applicable
-     */
-    public void setnDefeatedEnemies(int n){
-        nDefeatedEnemies = n;
-        if(n==nEnemies){
-            state = 1;
-        }
-    }
-    /**
-     * Set a new number of players defeated and set the game state to "lose" if applicable
-     */
-    public void setnDefeatedPlayers(int n){
-        nDefeatedPlayers = n;
-        if(n==nParty){
-            state = 2;
-        }
-    }
-
-    public boolean isInGame(){
-        return !(isWin() || isLose());
-    }
-    public boolean isWin(){
-        return nDefeatedEnemies==nEnemies;
-    }
-    public boolean isLose(){
-        return nDefeatedPlayers==nParty;
-    }
-
+    private ICharacter currentCharacter = new NullCharacter();
 
     //Possible Players
     private List<String[]> playersStat = new ArrayList<>();
@@ -99,12 +79,68 @@ public class GameController {
     private List<IWeapon> inventory = new ArrayList<>();
     private int nInventory=0;
 
+    /**
+     * Returns the current character from the turn list.
+     */
+    public ICharacter getCurrentCharacter() {
+        return currentCharacter;
+    }
 
+    /**
+     * Returns the number of defeated enemies and defeated players respectively.
+     */
+    public int getnDefeatedEnemies(){return nDefeatedEnemies;}
+    public int getnDefeatedPlayers(){return nDefeatedPlayers;}
+
+    /**
+     * Set a new number of enemies defeated and set the game state to "win" if applicable
+     */
+    public void setnDefeatedEnemies(int n){
+        nDefeatedEnemies = n;
+    }
+    /**
+     * Set a new number of players defeated and set the game state to "lose" if applicable
+     */
+    public void setnDefeatedPlayers(int n){
+        nDefeatedPlayers = n;
+    }
+
+    /**
+     * Returns the boolean value if the the user is in game, won or lost respectively
+     */
+    public boolean isInGame(){
+        return !(isWin() || isLose());
+    }
+    public boolean isWin(){
+        return nDefeatedEnemies==nEnemies;
+    }
+    public boolean isLose(){
+        return nDefeatedPlayers==nParty;
+    }
+
+    /**
+     * initialize a new game with a random number (max 8) of enemies
+     */
     public GameController(){
         nMaxEnemies = new Random().nextInt(8)+1;
         turnList.addListener(handlerList);
         this.setPhase(new DrawTitlePhase());
+        setPredefinedStats();
+    }
 
+    /**
+     * Initialize a new game with a random number from a specific seed, of enemies
+     */
+    public GameController(Random rng){
+        nMaxEnemies = rng.nextInt(8)+1;
+        turnList.addListener(handlerList);
+        setPredefinedStats();
+    }
+
+    /**
+     * set predefined characters, weapons and enemies to choose from
+     */
+    public void setPredefinedStats(){
         createKnightStat(30, 100);
         createThiefStat(20, 140);
         createBlackMageStat(25, 130, 30);
@@ -139,15 +175,11 @@ public class GameController {
         createEnemyStat(123,90,60,80);
         createEnemyStat(53,70,190,20);
         createEnemyStat(90,127,40,40);
-
-
-
-    }
-    public GameController(Random rng){
-        nMaxEnemies = rng.nextInt(8)+1;
-        turnList.addListener(handlerList);
     }
 
+    /**
+     * Set the phase of the game
+     */
     public void setPhase(Phase phase){
         this.phase = phase;
         phase.setController(this);
@@ -280,10 +312,6 @@ public class GameController {
      * Return the max number of enemies possible for the game
      */
     public int getnMaxEnemies() { return nMaxEnemies; }
-    /**
-     * Returns the state of the game: 0 for "in game", 1 for "victory", 2 for "defeat"
-     */
-    public int getState() { return state; }
 
     /**
      * Selects and creates a player from the list of stats available.
@@ -371,10 +399,24 @@ public class GameController {
         }
     }
 
+    /**
+     * Try to make an attack
+     * @param attacker:
+     *                character that attacks.
+     * @param defender:
+     *                character that recives the attack.
+     * @throws InvalidMovementException when the attack fails.
+     */
     public void tryAttack(ICharacter attacker, ICharacter defender) throws InvalidMovementException{
         phase.attack(attacker, defender);
     }
 
+    /**
+     * attack randomly to a character from the party
+     * @param attacker:
+     *                Enemy that make the attack.
+     * @throws InvalidMovementException when the attack fails.
+     */
     public void randomEnemyAttack(ICharacter attacker) throws InvalidMovementException{
         IPlayer defender = party_copy.get((new Random()).nextInt(party_copy.size()));
         tryAttack(attacker, defender);
@@ -413,23 +455,35 @@ public class GameController {
     }
 
     /**
-     * starts the character's turn by performing an action and ends
-     * it by putting him back on hold for the turn list.
+     * starts the character's turn by performing an action
+     * deriving to a respective phase according to the type of the character
      * @param character:
      *                 character with the turn.
      */
     public void characterTurn(ICharacter character){
         try {
-            this.actualCharacter = character;
+            this.currentCharacter = character;
             phase.toCharacterTurn(character);
         }catch (InvalidMovementException e){
             e.printStackTrace();
         }
     }
 
+    /**
+     * get values from an specific item and returns a list with them.
+     */
     public List<String> getValues(Iitem item){ return item.getValues(); }
 
+    /**
+     * get the values of a weapon from a specific player
+     */
+    public List<String> getWeaponValues(IPlayer player){
+        return player.getEquippedWeapon().getValues();
+    }
 
+    /**
+     * Transition to a Selection Weapon Phase
+     */
     public void toSelectionWeaponPhase(){
         try {
             phase.toSelectionWeaponPhase();
@@ -438,6 +492,9 @@ public class GameController {
         }
     }
 
+    /**
+     * Transition to a Turns Phase.
+     */
     public void toTurnsPhase() {
         try{
             phase.toTurnsPhase();
@@ -446,6 +503,9 @@ public class GameController {
         }
     }
 
+    /**
+     * Transition to a Player Turn Phase
+     */
     public void toPlayerTurnPhase(){
         try{
             phase.toPlayerTurnPhase();
@@ -454,6 +514,9 @@ public class GameController {
         }
     }
 
+    /**
+     * Transition to a Selection Player Phase
+     */
     public void toSelectionPlayerPhase() {
         try{
             phase.toSelectionPlayerPhase();
@@ -462,6 +525,9 @@ public class GameController {
         }
     }
 
+    /**
+     * Transition to a Enemy Turn Phase.
+     */
     public void toEnemyTurnPhase() {
         try{
             phase.toEnemyTurnPhase();
@@ -470,6 +536,9 @@ public class GameController {
         }
     }
 
+    /**
+     * Transition to a Selection Attack Phase.
+     */
     public void toSelectionAttackPhase() {
         try{
             phase.toSelectionAttackPhase();
@@ -478,6 +547,9 @@ public class GameController {
         }
     }
 
+    /**
+     * Transition to a End Phase.
+     */
     public void toEndPhase() {
         try{
             phase.toEndPhase();
@@ -486,6 +558,9 @@ public class GameController {
         }
     }
 
+    /**
+     * Returns of the game is in a specific phase respectively.
+     */
     public boolean isInSelectionPlayerPhase(){return phase.isInSelectionPlayerPhase();}
     public boolean isInSelectionWeaponPhase(){return phase.isInSelectionWeaponPhase();}
     public boolean isInTurnsPhase() {return phase.isInTurnsPhase();}
@@ -494,6 +569,9 @@ public class GameController {
     public boolean isInSelectionAttackPhase() {return phase.isInSelectionAttackPhase();}
 
 
+    /**
+     * derive phase change to "SelectionWeaponPhase" depending on whether or not a weapon can be equipped
+     */
     public void canChooseAWeapon() {
         try {
             phase.canChooseAWeapon();
@@ -501,15 +579,19 @@ public class GameController {
             e.printStackTrace();
         }
     }
-
+    /**
+     * derive phase change to "SelectionPlayerPhase" depending on whether or not a player can be selected
+     */
     public void canChooseAPlayer() {
-        try{
+        try {
             phase.canChooseAPlayer();
-        }catch (InvalidMovementException e){
+        } catch (InvalidMovementException e) {
             e.printStackTrace();
         }
     }
-
+    /**
+     * derive phase change to "SelectionAttackPhase" depending on whether or not the character can attack.
+     */
     public void canAttack() {
         try{
             phase.canAttack();
@@ -518,11 +600,12 @@ public class GameController {
         }
     }
 
+    /**
+     * Remove a player from the copy of the party.
+     */
     public void removePlayerCopy(IPlayer player) {
         party_copy.remove(player);
     }
 
-    public List<String> getWeaponValues(IPlayer player){
-        return player.getEquippedWeapon().getValues();
-    }
+
 }
