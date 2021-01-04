@@ -1,4 +1,9 @@
 package com.github.ssanchez7.finalreality.controller;
+import com.github.ssanchez7.finalreality.controller.exceptions.InvalidEquipmentException;
+import com.github.ssanchez7.finalreality.controller.exceptions.InvalidMovementException;
+import com.github.ssanchez7.finalreality.controller.exceptions.InvalidSelectionPlayerException;
+import com.github.ssanchez7.finalreality.controller.exceptions.InvalidTransitionException;
+import com.github.ssanchez7.finalreality.controller.phases.*;
 import com.github.ssanchez7.finalreality.model.character.Enemy;
 import com.github.ssanchez7.finalreality.model.character.ICharacter;
 import com.github.ssanchez7.finalreality.model.character.player.BlackMages;
@@ -8,10 +13,8 @@ import com.github.ssanchez7.finalreality.model.character.player.Thieves;
 import com.github.ssanchez7.finalreality.model.weapon.*;
 import org.junit.jupiter.api.*;
 
-import java.io.BufferedReader;
 import java.io.ByteArrayOutputStream;
 import java.io.PrintStream;
-import java.io.StringReader;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
@@ -20,9 +23,15 @@ import java.util.concurrent.LinkedBlockingQueue;
 
 import static org.junit.jupiter.api.Assertions.*;
 
+/**
+ * containing the tests for the controller of the game "Final reality".
+ *
+ * @author Samuel Sanchez Parra
+ */
 class GameControllerTest {
 
-    private GameController gm;
+    private GameController gc4;
+    private GameController gc2;
     private GameController gm_seed;
     private long seed;
 
@@ -57,8 +66,9 @@ class GameControllerTest {
     @BeforeEach
     void setUp() {
         seed = new Random().nextLong();
-        gm_seed = new GameController(new Random(seed));
-        gm = new GameController();
+        gm_seed = new GameController(new Random(seed),4);
+        gc4 = new GameController(4);
+        gc2 = new GameController(2);
         turns = new LinkedBlockingQueue<>();
     }
 
@@ -72,34 +82,41 @@ class GameControllerTest {
      * Checks that the controller selects a player correctly.
      */
     @Test
-    void selectionPlayerTest(){
-        assertTrue(gm.getParty().isEmpty());
+    void selectionPlayerTest() throws InvalidEquipmentException, InvalidSelectionPlayerException {
+        assertTrue(gc4.getParty().isEmpty());
         //player stats
         for(int i=0; i<4; i++){
-            gm.createKnightStat(HP_MAX, DEFENSE_POINTS);
-            gm.createThiefStat(HP_MAX, DEFENSE_POINTS);
-            gm.createBlackMageStat(HP_MAX, DEFENSE_POINTS, MANA_MAX);
-            gm.createEngineerStat(HP_MAX, DEFENSE_POINTS);
-            gm.createWhiteMageStat(HP_MAX, DEFENSE_POINTS, MANA_MAX);
+            gc4.createKnightStat(HP_MAX, DEFENSE_POINTS);
+            gc4.createThiefStat(HP_MAX, DEFENSE_POINTS);
+            gc4.createBlackMageStat(HP_MAX, DEFENSE_POINTS, MANA_MAX);
+            gc4.createEngineerStat(HP_MAX, DEFENSE_POINTS);
+            gc4.createWhiteMageStat(HP_MAX, DEFENSE_POINTS, MANA_MAX);
         }
         //inventory
         for(int i=0; i<4; i++) {
-            gm.createSword("Sword", WEAPON_DAMAGE, WEAPON_WEIGHT);
-            gm.createBow("Bow", WEAPON_DAMAGE, WEAPON_WEIGHT);
-            gm.createKnife("Knife", WEAPON_DAMAGE, WEAPON_WEIGHT);
-            gm.createAxe("Axe", WEAPON_DAMAGE, WEAPON_WEIGHT);
-            gm.createStaff("Staff", WEAPON_DAMAGE, WEAPON_WEIGHT, WEAPON_MAGIC_DAMAGE);
+            gc4.createSword("Sword", WEAPON_DAMAGE, WEAPON_WEIGHT);
+            gc4.createBow("Bow", WEAPON_DAMAGE, WEAPON_WEIGHT);
+            gc4.createKnife("Knife", WEAPON_DAMAGE, WEAPON_WEIGHT);
+            gc4.createAxe("Axe", WEAPON_DAMAGE, WEAPON_WEIGHT);
+            gc4.createStaff("Staff", WEAPON_DAMAGE, WEAPON_WEIGHT, WEAPON_MAGIC_DAMAGE);
         }
 
-        gm.createKnightStat(HP_MAX, DEFENSE_POINTS);
-        gm.createSword("Sword", WEAPON_DAMAGE, WEAPON_WEIGHT);
+        gc4.createKnightStat(HP_MAX, DEFENSE_POINTS);
+        gc4.createSword("Sword", WEAPON_DAMAGE, WEAPON_WEIGHT);
         for (int i=0; i<20; i++){
-            gm.selectionPlayer(new BufferedReader(new StringReader("1\nplayer"+(i+1)+"\n1\n\n")));
-            assertEquals(i+1,gm.getnParty());
+            IPlayer player = gc4.selectionPlayer(0,"player"+(i+1));
+            gc4.equipWeapon(player,0);
+            assertEquals(i+1, gc4.getnParty());
         }
-        gm.selectionPlayer(new BufferedReader(new StringReader("1\nplayer21\n1\n\n")));
-        assertEquals(20,gm.getnParty());
-        assertNotEquals(21,gm.getnParty());
+        assertThrows(InvalidSelectionPlayerException.class,() -> {
+            IPlayer player = gc4.selectionPlayer(0,"player21");
+            gc4.equipWeapon(player,0);
+        });
+
+        gc4.setPhase(new EndPhase());
+        assertThrows(InvalidMovementException.class,() -> {
+            gc4.getPhase().canChooseAPlayer();
+        });
     }
 
     /**
@@ -111,19 +128,19 @@ class GameControllerTest {
         String[] names = {"enemy1", "enemy2", "enemy3"};
         int[][] stats = {{100,100,100,100},{200,200,200,200},{300,300,300,300}};
         for(String name : names){
-            gm.createEnemyName(name);
+            gc4.createEnemyName(name);
         }
         for(int[] stat : stats){
-            gm.createEnemyStat(stat[0],stat[1],stat[2],stat[3]);
+            gc4.createEnemyStat(stat[0],stat[1],stat[2],stat[3]);
         }
         for(int i=0; i<20; i++) {
-            gm.selectionEnemy();
-            assertEquals(i+1, gm.getnEnemies());
+            gc4.selectionEnemy();
+            assertEquals(i+1, gc4.getnEnemies());
         }
-        gm.selectionEnemy();
-        assertEquals(20, gm.getnEnemies());
-        assertNotEquals(21, gm.getnEnemies());
-        for(Enemy e : gm.getEnemies()){
+        gc4.selectionEnemy();
+        assertEquals(20, gc4.getnEnemies());
+        assertNotEquals(21, gc4.getnEnemies());
+        for(Enemy e : gc4.getEnemies()){
             String rName = e.getName();
             assertTrue(rName.equals(names[0]) || rName.equals(names[1]) || rName.equals(names[2]));
             int[] rStat = {e.getHp(), e.getDefensePoints(), e.getAttackPoints(), e.getWeight()};
@@ -140,43 +157,43 @@ class GameControllerTest {
      */
     @Test
     public void createPlayerStatTest(){
-        assertTrue(gm.getPlayersStat().isEmpty());
+        assertTrue(gc4.getPlayersStat().isEmpty());
         for (int i=0; i<10; i++){
-            gm.createKnightStat(HP_MAX, DEFENSE_POINTS);
-            assertTrue(gm.getnPlayers()==gm.getPlayersStat().size() && gm.getnPlayers()==(5*i+1));
-            gm.createBlackMageStat(HP_MAX, DEFENSE_POINTS, MANA_MAX);
-            assertTrue(gm.getnPlayers()==gm.getPlayersStat().size() && gm.getnPlayers()==(5*i+2));
-            gm.createEngineerStat(HP_MAX, DEFENSE_POINTS);
-            assertTrue(gm.getnPlayers()==gm.getPlayersStat().size() && gm.getnPlayers()==(5*i+3));
-            gm.createThiefStat(HP_MAX, DEFENSE_POINTS);
-            assertTrue(gm.getnPlayers()==gm.getPlayersStat().size() && gm.getnPlayers()==(5*i+4));
-            gm.createWhiteMageStat(HP_MAX, DEFENSE_POINTS, MANA_MAX);
-            assertTrue(gm.getnPlayers()==gm.getPlayersStat().size() && gm.getnPlayers()==(5*i+5));
+            gc4.createKnightStat(HP_MAX, DEFENSE_POINTS);
+            assertTrue(gc4.getnPlayers()== gc4.getPlayersStat().size() && gc4.getnPlayers()==(5*i+1));
+            gc4.createBlackMageStat(HP_MAX, DEFENSE_POINTS, MANA_MAX);
+            assertTrue(gc4.getnPlayers()== gc4.getPlayersStat().size() && gc4.getnPlayers()==(5*i+2));
+            gc4.createEngineerStat(HP_MAX, DEFENSE_POINTS);
+            assertTrue(gc4.getnPlayers()== gc4.getPlayersStat().size() && gc4.getnPlayers()==(5*i+3));
+            gc4.createThiefStat(HP_MAX, DEFENSE_POINTS);
+            assertTrue(gc4.getnPlayers()== gc4.getPlayersStat().size() && gc4.getnPlayers()==(5*i+4));
+            gc4.createWhiteMageStat(HP_MAX, DEFENSE_POINTS, MANA_MAX);
+            assertTrue(gc4.getnPlayers()== gc4.getPlayersStat().size() && gc4.getnPlayers()==(5*i+5));
         }
-        gm.createKnightStat(HP_MAX, DEFENSE_POINTS);
-        assertEquals(gm.getnPlayers(),gm.getPlayersStat().size());
-        assertNotEquals(51,gm.getnPlayers());
-        assertEquals(50,gm.getnPlayers());
+        gc4.createKnightStat(HP_MAX, DEFENSE_POINTS);
+        assertEquals(gc4.getnPlayers(), gc4.getPlayersStat().size());
+        assertNotEquals(51, gc4.getnPlayers());
+        assertEquals(50, gc4.getnPlayers());
 
-        gm.createWhiteMageStat(HP_MAX, DEFENSE_POINTS, MANA_MAX);
-        assertEquals(gm.getnPlayers(),gm.getPlayersStat().size());
-        assertNotEquals(51,gm.getnPlayers());
-        assertEquals(50,gm.getnPlayers());
+        gc4.createWhiteMageStat(HP_MAX, DEFENSE_POINTS, MANA_MAX);
+        assertEquals(gc4.getnPlayers(), gc4.getPlayersStat().size());
+        assertNotEquals(51, gc4.getnPlayers());
+        assertEquals(50, gc4.getnPlayers());
 
-        gm.createThiefStat(HP_MAX, DEFENSE_POINTS);
-        assertEquals(gm.getnPlayers(),gm.getPlayersStat().size());
-        assertNotEquals(51,gm.getnPlayers());
-        assertEquals(50,gm.getnPlayers());
+        gc4.createThiefStat(HP_MAX, DEFENSE_POINTS);
+        assertEquals(gc4.getnPlayers(), gc4.getPlayersStat().size());
+        assertNotEquals(51, gc4.getnPlayers());
+        assertEquals(50, gc4.getnPlayers());
 
-        gm.createEngineerStat(HP_MAX, DEFENSE_POINTS);
-        assertEquals(gm.getnPlayers(),gm.getPlayersStat().size());
-        assertNotEquals(51,gm.getnPlayers());
-        assertEquals(50,gm.getnPlayers());
+        gc4.createEngineerStat(HP_MAX, DEFENSE_POINTS);
+        assertEquals(gc4.getnPlayers(), gc4.getPlayersStat().size());
+        assertNotEquals(51, gc4.getnPlayers());
+        assertEquals(50, gc4.getnPlayers());
 
-        gm.createBlackMageStat(HP_MAX, DEFENSE_POINTS, MANA_MAX);
-        assertEquals(gm.getnPlayers(),gm.getPlayersStat().size());
-        assertNotEquals(51,gm.getnPlayers());
-        assertEquals(50,gm.getnPlayers());
+        gc4.createBlackMageStat(HP_MAX, DEFENSE_POINTS, MANA_MAX);
+        assertEquals(gc4.getnPlayers(), gc4.getPlayersStat().size());
+        assertNotEquals(51, gc4.getnPlayers());
+        assertEquals(50, gc4.getnPlayers());
     }
 
     /**
@@ -184,22 +201,22 @@ class GameControllerTest {
      */
     @Test
     public void createEnemiesTest() {
-        assertTrue(gm.getEnemiesName().isEmpty());
-        assertTrue(gm.getEnemiesStat().isEmpty());
+        assertTrue(gc4.getEnemiesName().isEmpty());
+        assertTrue(gc4.getEnemiesStat().isEmpty());
         for(int i=0; i<50; i++){
-            gm.createEnemyStat(HP_MAX, ENEMY_DEFENSE_POINTS, ENEMY_ATTACK_POINTS, ENEMY_WEIGHT);
-            assertTrue(gm.getnEnemiesStat()==gm.getEnemiesStat().size() && gm.getnEnemiesStat()==i+1);
-            gm.createEnemyName(ENEMY_NAME+i);
-            assertTrue(gm.getnEnemiesNames()==gm.getEnemiesName().size() && gm.getnEnemiesNames()==i+1);
+            gc4.createEnemyStat(HP_MAX, ENEMY_DEFENSE_POINTS, ENEMY_ATTACK_POINTS, ENEMY_WEIGHT);
+            assertTrue(gc4.getnEnemiesStat()== gc4.getEnemiesStat().size() && gc4.getnEnemiesStat()==i+1);
+            gc4.createEnemyName(ENEMY_NAME+i);
+            assertTrue(gc4.getnEnemiesNames()== gc4.getEnemiesName().size() && gc4.getnEnemiesNames()==i+1);
         }
-        gm.createEnemyStat(HP_MAX, ENEMY_DEFENSE_POINTS, ENEMY_ATTACK_POINTS, ENEMY_WEIGHT);
-        assertEquals(gm.getnEnemiesStat(),gm.getEnemiesStat().size());
-        assertNotEquals(51,gm.getnEnemiesStat());
-        assertEquals(50,gm.getnEnemiesStat());
-        gm.createEnemyName(ENEMY_NAME+51);
-        assertEquals(gm.getnEnemiesNames(),gm.getEnemiesName().size());
-        assertNotEquals(51,gm.getnEnemiesNames());
-        assertEquals(50,gm.getnEnemiesNames());
+        gc4.createEnemyStat(HP_MAX, ENEMY_DEFENSE_POINTS, ENEMY_ATTACK_POINTS, ENEMY_WEIGHT);
+        assertEquals(gc4.getnEnemiesStat(), gc4.getEnemiesStat().size());
+        assertNotEquals(51, gc4.getnEnemiesStat());
+        assertEquals(50, gc4.getnEnemiesStat());
+        gc4.createEnemyName(ENEMY_NAME+51);
+        assertEquals(gc4.getnEnemiesNames(), gc4.getEnemiesName().size());
+        assertNotEquals(51, gc4.getnEnemiesNames());
+        assertEquals(50, gc4.getnEnemiesNames());
     }
 
     /**
@@ -207,43 +224,43 @@ class GameControllerTest {
      */
     @Test
     public void createInventoryTest(){
-        assertTrue(gm.getInventory().isEmpty());
+        assertTrue(gc4.getInventory().isEmpty());
         for (int i=0; i<6; i++){
-            gm.createAxe("Axe"+i, WEAPON_DAMAGE, WEAPON_WEIGHT);
-            assertTrue(gm.getnInventory()==gm.getInventory().size() && gm.getnInventory()==(5*i+1));
-            gm.createBow("Bow"+i, WEAPON_DAMAGE, WEAPON_WEIGHT);
-            assertTrue(gm.getnInventory()==gm.getInventory().size() && gm.getnInventory()==(5*i+2));
-            gm.createKnife("Knife"+i, WEAPON_DAMAGE, WEAPON_WEIGHT);
-            assertTrue(gm.getnInventory()==gm.getInventory().size() && gm.getnInventory()==(5*i+3));
-            gm.createStaff("Staff"+i, WEAPON_DAMAGE, WEAPON_WEIGHT, WEAPON_MAGIC_DAMAGE);
-            assertTrue(gm.getnInventory()==gm.getInventory().size() && gm.getnInventory()==(5*i+4));
-            gm.createSword("Sword"+i, WEAPON_DAMAGE, WEAPON_WEIGHT);
-            assertTrue(gm.getnInventory()==gm.getInventory().size() && gm.getnInventory()==(5*i+5));
+            gc4.createAxe("Axe"+i, WEAPON_DAMAGE, WEAPON_WEIGHT);
+            assertTrue(gc4.getnInventory()== gc4.getInventory().size() && gc4.getnInventory()==(5*i+1));
+            gc4.createBow("Bow"+i, WEAPON_DAMAGE, WEAPON_WEIGHT);
+            assertTrue(gc4.getnInventory()== gc4.getInventory().size() && gc4.getnInventory()==(5*i+2));
+            gc4.createKnife("Knife"+i, WEAPON_DAMAGE, WEAPON_WEIGHT);
+            assertTrue(gc4.getnInventory()== gc4.getInventory().size() && gc4.getnInventory()==(5*i+3));
+            gc4.createStaff("Staff"+i, WEAPON_DAMAGE, WEAPON_WEIGHT, WEAPON_MAGIC_DAMAGE);
+            assertTrue(gc4.getnInventory()== gc4.getInventory().size() && gc4.getnInventory()==(5*i+4));
+            gc4.createSword("Sword"+i, WEAPON_DAMAGE, WEAPON_WEIGHT);
+            assertTrue(gc4.getnInventory()== gc4.getInventory().size() && gc4.getnInventory()==(5*i+5));
         }
-        gm.createAxe("Axe"+31, WEAPON_DAMAGE, WEAPON_WEIGHT);
-        assertEquals(gm.getnInventory(),gm.getInventory().size());
-        assertNotEquals(31,gm.getnInventory());
-        assertEquals(30,gm.getnInventory());
+        gc4.createAxe("Axe"+31, WEAPON_DAMAGE, WEAPON_WEIGHT);
+        assertEquals(gc4.getnInventory(), gc4.getInventory().size());
+        assertNotEquals(31, gc4.getnInventory());
+        assertEquals(30, gc4.getnInventory());
 
-        gm.createBow("Bow"+31, WEAPON_DAMAGE, WEAPON_WEIGHT);
-        assertEquals(gm.getnInventory(),gm.getInventory().size());
-        assertNotEquals(31,gm.getnInventory());
-        assertEquals(30,gm.getnInventory());
+        gc4.createBow("Bow"+31, WEAPON_DAMAGE, WEAPON_WEIGHT);
+        assertEquals(gc4.getnInventory(), gc4.getInventory().size());
+        assertNotEquals(31, gc4.getnInventory());
+        assertEquals(30, gc4.getnInventory());
 
-        gm.createKnife("Knife"+31, WEAPON_DAMAGE, WEAPON_WEIGHT);
-        assertEquals(gm.getnInventory(),gm.getInventory().size());
-        assertNotEquals(31,gm.getnInventory());
-        assertEquals(30,gm.getnInventory());
+        gc4.createKnife("Knife"+31, WEAPON_DAMAGE, WEAPON_WEIGHT);
+        assertEquals(gc4.getnInventory(), gc4.getInventory().size());
+        assertNotEquals(31, gc4.getnInventory());
+        assertEquals(30, gc4.getnInventory());
 
-        gm.createStaff("Staff"+31, WEAPON_DAMAGE, WEAPON_WEIGHT, WEAPON_MAGIC_DAMAGE);
-        assertEquals(gm.getnInventory(),gm.getInventory().size());
-        assertNotEquals(31,gm.getnInventory());
-        assertEquals(30,gm.getnInventory());
+        gc4.createStaff("Staff"+31, WEAPON_DAMAGE, WEAPON_WEIGHT, WEAPON_MAGIC_DAMAGE);
+        assertEquals(gc4.getnInventory(), gc4.getInventory().size());
+        assertNotEquals(31, gc4.getnInventory());
+        assertEquals(30, gc4.getnInventory());
 
-        gm.createSword("Sword"+31, WEAPON_DAMAGE, WEAPON_WEIGHT);
-        assertEquals(gm.getnInventory(),gm.getInventory().size());
-        assertNotEquals(31,gm.getnInventory());
-        assertEquals(30,gm.getnInventory());
+        gc4.createSword("Sword"+31, WEAPON_DAMAGE, WEAPON_WEIGHT);
+        assertEquals(gc4.getnInventory(), gc4.getInventory().size());
+        assertNotEquals(31, gc4.getnInventory());
+        assertEquals(30, gc4.getnInventory());
     }
 
     /**
@@ -276,80 +293,98 @@ class GameControllerTest {
         blackMageValues.add("Staff");
         blackMageValues.add(String.valueOf(MANA_MAX));
 
-        assertEquals(staffValues, weapon.getValues());
-        assertEquals(enemyValues, enemy.getValues());
-        assertEquals(blackMageValues, player.getValues());
+        assertEquals(staffValues, gc2.getValues(weapon));
+        assertEquals(enemyValues, gc2.getValues(enemy));
+        assertEquals(blackMageValues, gc2.getValues(player));
+
+        assertEquals(staffValues, gc2.getWeaponValues(player));
     }
 
     /**
      * Checks that the controller equips weapons on a player correctly.
      */
     @Test
-    public void equipWeaponTest(){
+    public void equipWeaponTest() throws InvalidEquipmentException {
         //inventory
-        gm.createSword("Sword", WEAPON_DAMAGE, WEAPON_WEIGHT);
-        gm.createAxe("Axe", WEAPON_DAMAGE, WEAPON_WEIGHT);
-        gm.createStaff("Staff", WEAPON_DAMAGE, WEAPON_WEIGHT, WEAPON_MAGIC_DAMAGE);
+        gc4.createSword("Sword", WEAPON_DAMAGE, WEAPON_WEIGHT);
+        gc4.createAxe("Axe", WEAPON_DAMAGE, WEAPON_WEIGHT);
+        gc4.createStaff("Staff", WEAPON_DAMAGE, WEAPON_WEIGHT, WEAPON_MAGIC_DAMAGE);
 
         IPlayer player = new Knights("Knight", turns, HP_MAX, DEFENSE_POINTS);
 
         //Success first equipment (dropped a "null")
         assertNull(player.getEquippedWeapon());
-        assertEquals(3, gm.getnInventory());
-        IWeapon swordInventory = gm.getInventory().get(0);
-        gm.equipWeapon(player, new BufferedReader(new StringReader(1+"\n\n")));
-        assertEquals(2, gm.getnInventory());
+        assertEquals(3, gc4.getnInventory());
+        IWeapon swordInventory = gc4.getInventory().get(0);
+        gc4.equipWeapon(player,0);
+        assertEquals(2, gc4.getnInventory());
         assertEquals(swordInventory, player.getEquippedWeapon());
-        assertEquals(gm.getInventory().get(0), new Axes("Axe", WEAPON_DAMAGE, WEAPON_WEIGHT));
+        assertEquals(gc4.getInventory().get(0), new Axes("Axe", WEAPON_DAMAGE, WEAPON_WEIGHT));
 
         //Success second equipment (dropped a weapon)
-        IWeapon AxeInventory = gm.getInventory().get(0);
-        gm.equipWeapon(player, new BufferedReader(new StringReader(1+"\n\n")));
-        assertNotEquals(1, gm.getnInventory());
-        assertEquals(2, gm.getnInventory());
+        IWeapon AxeInventory = gc4.getInventory().get(0);
+        gc4.equipWeapon(player,0);
+        assertNotEquals(1, gc4.getnInventory());
+        assertEquals(2, gc4.getnInventory());
         assertEquals(AxeInventory, player.getEquippedWeapon());
-        assertEquals(gm.getInventory().get(0), new Staffs("Staff", WEAPON_DAMAGE, WEAPON_WEIGHT, WEAPON_MAGIC_DAMAGE));
-        assertEquals(gm.getInventory().get(1), swordInventory);
+        assertEquals(gc4.getInventory().get(0), new Staffs("Staff", WEAPON_DAMAGE, WEAPON_WEIGHT, WEAPON_MAGIC_DAMAGE));
+        assertEquals(gc4.getInventory().get(1), swordInventory);
 
         //Failed equipment
-        IWeapon staffInventory = gm.getInventory().get(0);
-        gm.equipWeapon(player, new BufferedReader(new StringReader(1+"\n\n")));
-        assertEquals(2, gm.getnInventory());
-        assertNotEquals(staffInventory, player.getEquippedWeapon());
-        assertEquals(AxeInventory, player.getEquippedWeapon());
-        assertEquals(gm.getInventory().get(0), new Staffs("Staff", WEAPON_DAMAGE, WEAPON_WEIGHT, WEAPON_MAGIC_DAMAGE));
+        assertThrows(InvalidEquipmentException.class,() -> {
+            gc4.equipWeapon(player,0);
+        });
+        assertThrows(InvalidMovementException.class,() -> {
+            gc4.getPhase().canChooseAWeapon();
+        });
+
+
     }
 
     /**
      * checks a correct operation of turns.
      */
     @RepeatedTest(3)
-    public void waitTurnsTest(){
+    public void waitTurnsTest() throws InvalidEquipmentException, InterruptedException, InvalidSelectionPlayerException {
+        gc2.toSelectionPlayerPhase();
         String knightName = "knight";
         String thiefName = "thief";
         int knightWeight = 10;
         int enemyWeight = 20;
         int thiefWeight = 30;
         //player stats
-        gm.createKnightStat(HP_MAX, DEFENSE_POINTS);
-        gm.createThiefStat(HP_MAX, DEFENSE_POINTS);
+        gc2.createKnightStat(HP_MAX, DEFENSE_POINTS);
+        gc2.createThiefStat(HP_MAX, DEFENSE_POINTS);
         //enemies stats
-        gm.createEnemyStat(HP_MAX, 0, ENEMY_ATTACK_POINTS, enemyWeight);
-        gm.createEnemyName(ENEMY_NAME);
+        gc2.createEnemyStat(HP_MAX, 0, ENEMY_ATTACK_POINTS, enemyWeight);
+        gc2.createEnemyName(ENEMY_NAME);
         //inventory
-        gm.createSword("Sword", HP_MAX, knightWeight);
-        gm.createKnife("Knife", HP_MAX, thiefWeight);
-        gm.createKnife("Knife", HP_MAX, 1);
+        gc2.createSword("Sword", HP_MAX, knightWeight);
+        gc2.createKnife("Knife", HP_MAX, thiefWeight);
+        gc2.createKnife("Knife", HP_MAX, 1);
         //Selections
-        gm.selectionPlayer(new BufferedReader(new StringReader("1\n"+knightName+"\n1\n\n")));
-        gm.selectionPlayer(new BufferedReader(new StringReader("1\n"+thiefName+"\n1\n\n")));
-        gm.selectionEnemy();
+
+        IPlayer player = gc2.selectionPlayer(0, knightName);
+        gc2.canChooseAWeapon();
+
+        gc2.equipWeapon(player, 0);
+        gc2.canChooseAPlayer();
+
+        IPlayer player2 = gc2.selectionPlayer(0,thiefName);
+        gc2.canChooseAWeapon();
+
+        gc2.equipWeapon(player2,0);
+        gc2.canChooseAPlayer();
+
+        gc2.selectionEnemy();
+
+        gc2.toTurnsPhase();
 
         int maxWeight = Math.max(knightWeight, Math.max(thiefWeight, enemyWeight));
 
-        assertTrue(gm.getTurnsQueue().isEmpty());
-        gm.initialWaitTurns(((maxWeight/10)+1)*1000);
-        assertEquals(3, gm.getTurnsQueue().size());
+        assertTrue(gc2.getTurnsQueue().isEmpty());
+        gc2.initialWaitTurns(((maxWeight/10)+1)*1000);
+        assertEquals(3, gc2.getTurnsQueue().size());
 
         IPlayer knight = new Knights(knightName, turns, HP_MAX, DEFENSE_POINTS);
         IPlayer thief = new Thieves(thiefName, turns, HP_MAX, DEFENSE_POINTS);
@@ -364,168 +399,178 @@ class GameControllerTest {
         // iter    (1)  (2)  (3)  (4)  (5)  (6)  (7)  (8)  (9)  (10)
         // peek()   K    E    T    K   null  ?    ?   ?     ?    ?
 
-        ICharacter[] characterList = {knight, enemy, thief, knight, null};
+        ICharacter[] characterList = {knight, enemy, thief, knight};
         for(ICharacter character : characterList) {
-            assertEquals(character, gm.getTurnsQueue().peek());
-            gm.turnIsNotEmpty(500);
+            autoNextTurn(500, gc2);
+            assertEquals(character, gc2.getCurrentCharacter());
         }
-        assertEquals(0, gm.getState());
-        assertTrue(gm.getTurnsQueue().peek().equals(knight) || gm.getTurnsQueue().peek().equals(enemy));
-        if(gm.getTurnsQueue().peek().equals(enemy)){
-            gm.turnIsNotEmpty(500);
-            assertEquals(knight, gm.getTurnsQueue().peek());
+        assertTrue(gc2.isInGame());
+        assertNull(gc2.getTurnsQueue().peek());
+        gc2.turnList.turnIsNotEmpty(gc2.getTurnsQueue());
+        Thread.sleep(maxWeight*100);
+        assertNotNull(gc2.getTurnsQueue().peek());
+        autoNextTurn(500,gc2);
+        assertTrue(gc2.getCurrentCharacter().equals(knight) || gc2.getCurrentCharacter().equals(enemy));
+        if(gc2.getCurrentCharacter().equals(enemy)){
+            gc2.nextTurn(500);
+            assertEquals(knight, gc2.getCurrentCharacter());
             // turns change with a equipment change
-            gm.equipWeapon((IPlayer) gm.getTurnsQueue().peek(), new BufferedReader(new StringReader("1\n\n")));
-            gm.turnIsNotEmpty(500);
+            gc2.canChooseAWeapon();
+            gc2.equipWeapon((IPlayer) gc2.getCurrentCharacter(),0);
+            gc2.toPlayerTurnPhase();
+            gc2.canAttack();
+            gc2.getCurrentCharacter().waitTurn();
+            gc2.toTurnsPhase();
 
-            assertNotEquals(null, gm.getTurnsQueue().peek());
-            assertEquals(knight, gm.getTurnsQueue().peek());
-            gm.turnIsNotEmpty(500);
+            autoNextTurn(500, gc2);
+            assertEquals(knight, gc2.getTurnsQueue().peek());
+            autoNextTurn(500, gc2);
         }
-        assertEquals(0, gm.getState());
-        try{
-            //assertEquals(enemy, gm.getTurnsQueue().peek());
-            gm.attack(gm.getParty().get(0), gm.getEnemies().get(0));
-            assertTrue(gm.getEnemies().get(0).isKO());
-            assertEquals(1,gm.getnDefeatedEnemies());
-            for(int i=0; i<6; i++){
-                gm.turnIsNotEmpty(500);
-            }
-            Thread.sleep(3000);
-            assertEquals(2, gm.getTurnsQueue().size());
-            assertEquals(1, gm.getState());
-        }catch (InterruptedException e) {
-            e.printStackTrace();
-        }
+        assertTrue(gc2.isInGame());
+
+        gc2.attack(gc2.getParty().get(0), gc2.getEnemies().get(0));
+        assertTrue(gc2.getEnemies().get(0).isKO());
+        assertEquals(1, gc2.getnDefeatedEnemies());
+        assertTrue(gc2.isWin());
+
+        gc2.setPhase(new EndPhase());
+        assertThrows(InvalidMovementException.class,() -> {
+            gc2.getPhase().toCharacterTurn(player);
+        });
+
     }
 
     /**
-     * check that state is "win" when all enemies are defeated
+     * holds all for an "automatic" next turn
      */
-    @Test
-    public void stateWinTest(){
-        gm.createKnightStat(HP_MAX, DEFENSE_POINTS);
-        gm.createEnemyStat(HP_MAX, 0, ENEMY_ATTACK_POINTS, ENEMY_WEIGHT);
-        gm.createEnemyName(ENEMY_NAME);
-        gm.createSword("Sword", HP_MAX, WEAPON_WEIGHT);
-        gm.selectionPlayer(new BufferedReader(new StringReader("1\nKnight\n1\n\n")));
-        gm.selectionEnemy();
-        assertTrue(gm.getTurnsQueue().isEmpty());
-        gm.initialWaitTurns(2000);
-        assertEquals(0, gm.getState());
-        try{
-            gm.attack(gm.getParty().get(0), gm.getEnemies().get(0));
-            assertTrue(gm.getEnemies().get(0).isKO());
-            assertEquals(1,gm.getnDefeatedEnemies());
-            for(int i=0; i<4; i++){
-                gm.turnIsNotEmpty(500);
-            }
-            Thread.sleep(1000);
-            assertEquals(1, gm.getState());
-        }catch (InterruptedException e) {
-            e.printStackTrace();
-        }
-    }
-    /**
-     * check that state is "lose" when all players are defeated
-     */
-    @Test
-    public void stateLoseTest(){
-        gm.createKnightStat(HP_MAX, 0);
-        gm.createEnemyStat(HP_MAX, ENEMY_DEFENSE_POINTS, HP_MAX, ENEMY_WEIGHT);
-        gm.createEnemyName(ENEMY_NAME);
-        gm.createSword("Sword", HP_MAX, WEAPON_WEIGHT);
-        gm.selectionPlayer(new BufferedReader(new StringReader("1\nKnight\n1\n\n")));
-        gm.selectionEnemy();
-        assertTrue(gm.getTurnsQueue().isEmpty());
-        gm.initialWaitTurns(2000);
-        assertEquals(0, gm.getState());
-        try{
-            gm.attack(gm.getEnemies().get(0), gm.getParty().get(0));
-            assertTrue(gm.getParty().get(0).isKO());
-            assertEquals(1,gm.getnDefeatedPlayers());
-            for(int i=0; i<4; i++){
-                gm.turnIsNotEmpty(500);
-            }
-            Thread.sleep(1000);
-            assertEquals(2, gm.getState());
-        }catch (InterruptedException e) {
-            e.printStackTrace();
-        }
+    private void autoNextTurn(int millis, GameController gc){
+        gc.nextTurn(millis);
+        gc.canAttack();
+        gc.getCurrentCharacter().waitTurn();
+        gc.toTurnsPhase();
     }
 
     /**
-     * check that the controller makes attacks between two characters
+     * check that the controller makes attacks between two characters correctly
      */
     @Test
-    public void attackTest(){
+    public void attackTest() throws InvalidMovementException {
         IPlayer player1 = new Knights("Knight", turns, HP_MAX, DEFENSE_POINTS);
         IPlayer player2 = new Thieves("Thief", turns, HP_MAX, DEFENSE_POINTS);
+        gc2.setPhase(new SelectionWeaponPhase());
         player1.equip(new Swords("sword", WEAPON_DAMAGE, WEAPON_WEIGHT));
-        gm.attack(player1, player2);
+        gc2.setPhase(new SelectionAttackPhase());
+        gc2.tryAttack(player1, player2);
         assertEquals(270, player2.getHp());
+
+        gc2.setPhase(new EndPhase());
+        assertThrows(InvalidMovementException.class,() -> {
+            gc2.tryAttack(player1, player2);
+        });
+        assertEquals(270, player2.getHp());
+        assertThrows(InvalidMovementException.class,() -> {
+            gc2.getPhase().canAttack();
+        });
+
+    }
+
+    /**
+     * check that the controller makes random attacks correctly
+     */
+    @RepeatedTest(10)
+    public void randomAttackTest() throws InvalidSelectionPlayerException, InvalidEquipmentException, InvalidMovementException {
+        //player stats
+        gc2.createKnightStat(HP_MAX, 0);
+        gc2.createThiefStat(HP_MAX, 0);
+        //enemies stats
+        gc2.createEnemyStat(HP_MAX, ENEMY_DEFENSE_POINTS, ENEMY_ATTACK_POINTS, ENEMY_WEIGHT);
+        gc2.createEnemyName(ENEMY_NAME);
+        //inventory
+        gc2.createSword("Sword", HP_MAX, WEAPON_WEIGHT);
+        gc2.createKnife("Knife", HP_MAX, WEAPON_WEIGHT);
+
+        gc2.canChooseAPlayer();
+        for(int i=0; i<gc2.getnMaxParty(); i++){
+            IPlayer p = gc2.selectionPlayer(0,"player"+(i+1));
+            gc2.canChooseAWeapon();
+            gc2.equipWeapon(p, 0);
+            gc2.canChooseAPlayer();
+        }
+        gc2.selectionEnemy();
+        gc2.setPhase(new SelectionAttackPhase());
+        Enemy enemy = gc2.getEnemies().get(0);
+
+        gc2.randomEnemyAttack(enemy);
+
+        IPlayer p1 = gc2.getParty().get(0);
+        IPlayer p2 = gc2.getParty().get(1);
+
+        assertTrue(p1.getHp()<HP_MAX || p2.getHp()<HP_MAX);
+
     }
 
     /**
      * checks a correct operation of defeated characters when they receives attacks.
      */
     @Test
-    public void defeatedCharacterTest(){
+    public void defeatedCharacterTest() throws  InvalidEquipmentException, InvalidSelectionPlayerException {
         //player stats
-        gm.createKnightStat(HP_MAX, 0);
-        gm.createThiefStat(HP_MAX, 0);
+        gc4.createKnightStat(HP_MAX, 0);
+        gc4.createThiefStat(HP_MAX, 0);
         //enemies stats
-        gm.createEnemyStat(HP_MAX, 0, HP_MAX, ENEMY_WEIGHT);
-        gm.createEnemyName(ENEMY_NAME);
+        gc4.createEnemyStat(HP_MAX, 0, HP_MAX, ENEMY_WEIGHT);
+        gc4.createEnemyName(ENEMY_NAME);
         //inventory
-        gm.createSword("Sword", HP_MAX, WEAPON_WEIGHT);
-        gm.createKnife("Knife", HP_MAX, WEAPON_WEIGHT);
-        gm.createKnife("Knife", HP_MAX, WEAPON_WEIGHT);
+        gc4.createSword("Sword", HP_MAX, WEAPON_WEIGHT);
+        gc4.createKnife("Knife", HP_MAX, WEAPON_WEIGHT);
+        gc4.createKnife("Knife", HP_MAX, WEAPON_WEIGHT);
 
-        gm.selectionPlayer(new BufferedReader(new StringReader("1\nknight\n1\n\n")));
-        gm.selectionPlayer(new BufferedReader(new StringReader("1\nthief\n1\n\n")));
-        gm.selectionEnemy();
-        gm.selectionEnemy();
-        gm.selectionEnemy();
+        IPlayer playerchoose1 = gc4.selectionPlayer(0,"knight");
+        gc4.equipWeapon(playerchoose1,0);
+        IPlayer playerchoose2 = gc4.selectionPlayer(0,"thief");
+        gc4.equipWeapon(playerchoose2,0);
+        gc4.selectionEnemy();
+        gc4.selectionEnemy();
+        gc4.selectionEnemy();
 
-        IPlayer player1 = gm.getParty().get(0);
-        IPlayer player2 = gm.getParty().get(1);
-        Enemy enemy1 = gm.getEnemies().get(0);
-        Enemy enemy2 = gm.getEnemies().get(1);
-        Enemy enemy3 = gm.getEnemies().get(2);
+        IPlayer player1 = gc4.getParty().get(0);
+        IPlayer player2 = gc4.getParty().get(1);
+        Enemy enemy1 = gc4.getEnemies().get(0);
+        Enemy enemy2 = gc4.getEnemies().get(1);
+        Enemy enemy3 = gc4.getEnemies().get(2);
 
         //Player doesn't defeat enemy
         IPlayer player3 = new Knights("weak", turns, HP_MAX, DEFENSE_POINTS);
         player3.equip(new Swords("stick", 0, WEAPON_WEIGHT));
-        gm.attack(player3, player1);
+        gc4.attack(player3, player1);
         assertFalse(player1.isKO());
-        assertEquals(0, gm.getnDefeatedPlayers());
+        assertEquals(0, gc4.getnDefeatedPlayers());
         //Enemy doesn't defeat player
-        gm.attack(player3, enemy1);
+        gc4.attack(player3, enemy1);
         assertFalse(enemy1.isKO());
-        assertEquals(0, gm.getnDefeatedEnemies());
+        assertEquals(0, gc4.getnDefeatedEnemies());
 
         //Player defeats enemy
-        gm.attack(player1, enemy2);
+        gc4.attack(player1, enemy2);
         assertTrue(enemy2.isKO());
-        assertEquals(1, gm.getnDefeatedEnemies());
+        assertEquals(1, gc4.getnDefeatedEnemies());
         //Player defeats player
-        gm.attack(player1, player2);
+        gc4.attack(player1, player2);
         assertTrue(player2.isKO());
-        assertEquals(1, gm.getnDefeatedPlayers());
+        assertEquals(1, gc4.getnDefeatedPlayers());
         //Enemy defeats enemy
-        gm.attack(enemy1, enemy3);
+        gc4.attack(enemy1, enemy3);
         assertTrue(enemy3.isKO());
-        assertEquals(2, gm.getnDefeatedEnemies());
+        assertEquals(2, gc4.getnDefeatedEnemies());
         //Enemy defeats player
-        gm.attack(enemy1, player1);
+        gc4.attack(enemy1, player1);
         assertTrue(player1.isKO());
-        assertEquals(2, gm.getnDefeatedPlayers());
+        assertEquals(2, gc4.getnDefeatedPlayers());
 
         //Character attack defeated character
-        gm.attack(enemy1, player1);
+        gc4.attack(enemy1, player1);
         assertTrue(player1.isKO());
-        assertEquals(2, gm.getnDefeatedPlayers());
+        assertEquals(2, gc4.getnDefeatedPlayers());
     }
 
 

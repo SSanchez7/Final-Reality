@@ -26,6 +26,7 @@ class PlayerCharacterTest extends AbstractCharacterTest {
   protected List<IPlayer> testPlayerCharacters;
   protected List<IWeapon> testWeapons;
   protected ICharacter enemy;
+  protected ICharacter nullCharacter;
 
   private static final String BLACK_MAGE_NAME = "Vivi";
   private static final String KNIGHT_NAME = "Adelbert";
@@ -66,6 +67,7 @@ class PlayerCharacterTest extends AbstractCharacterTest {
     testPlayerCharacters.add(new Thieves(THIEF_NAME, turns, HP_MAX, DEFENSE_POINTS));
 
     enemy = new Enemy("Enemy", turns, HP_MAX, ENEMY_DEFENSE_POINTS, ENEMY_ATTACK_POINTS, ENEMY_WEIGHT);
+    nullCharacter = new NullCharacter();
   }
 
   /**
@@ -348,6 +350,17 @@ class PlayerCharacterTest extends AbstractCharacterTest {
     assertEquals(true, character.isKO());
   }
 
+  /**
+   *
+   */
+  @Test
+  void nullCharacterTest(){
+    assertEquals("",nullCharacter.getName());
+    assertEquals(-1,nullCharacter.getHp());
+    assertEquals(-1, nullCharacter.getHpMax());
+    assertEquals(-1, nullCharacter.getDefensePoints());
+    assertEquals(-1, nullCharacter.getDefensePoints());
+  }
 
   /**
    * Auxiliary function that tries to equip a weapon on a character

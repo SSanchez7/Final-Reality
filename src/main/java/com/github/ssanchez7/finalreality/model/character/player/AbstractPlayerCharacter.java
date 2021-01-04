@@ -74,21 +74,19 @@ public abstract class AbstractPlayerCharacter extends AbstractCharacter implemen
   }
 
   @Override
-  public void action(){
-    System.out.print("\nTurno player: ");
-  }
-
-  @Override
   public void addListener(PropertyChangeListener listener){
     changesPlayer.addPropertyChangeListener(listener);
   }
 
   @Override
-  public void defeatedCharacter(){
+  public void isDefeatedCharacter(){
     if(this.isKO()) {
-      changesPlayer.firePropertyChange("DEFEATED_CHARACTER", null, null);
+      changesPlayer.firePropertyChange("DEFEATED_PLAYER", null, this);
     }
   }
+
+  @Override
+  public boolean isEnemy(){return false;}
 
 
 }
