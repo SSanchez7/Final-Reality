@@ -17,7 +17,7 @@ public class SelectionPlayerPhase extends Phase{
 
     @Override
     public void toTurnsPhase(){
-        if(controller.getnParty()==5) {
+        if(controller.getnParty()==controller.getnMaxParty()) {
             this.changePhase(new TurnsPhase());
         }
     }

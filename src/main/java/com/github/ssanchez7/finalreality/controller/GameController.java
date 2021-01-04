@@ -2,6 +2,7 @@ package com.github.ssanchez7.finalreality.controller;
 
 import com.github.ssanchez7.finalreality.controller.exceptions.InvalidEquipmentException;
 import com.github.ssanchez7.finalreality.controller.exceptions.InvalidMovementException;
+import com.github.ssanchez7.finalreality.controller.exceptions.InvalidSelectionPlayerException;
 import com.github.ssanchez7.finalreality.controller.exceptions.InvalidTransitionException;
 import com.github.ssanchez7.finalreality.controller.handlers.*;
 import com.github.ssanchez7.finalreality.controller.phases.DrawTitlePhase;
@@ -28,7 +29,7 @@ public class GameController {
     /**
      * Manage the turn List changes
      */
-    private final TurnList turnList = new TurnList();
+    final TurnList turnList = new TurnList();
 
     /**
      * Handlers that receives notifies from a change in TurnList, defeatedPlayer and DefeatedEnemy respectively
@@ -42,6 +43,7 @@ public class GameController {
      */
     private final List<IPlayer> party = new ArrayList<>();
     private final List<IPlayer> party_copy = new ArrayList<>();
+    private final int nMaxParty;
     private int nParty = 0;
 
     /**
@@ -121,60 +123,20 @@ public class GameController {
     /**
      * initialize a new game with a random number (max 8) of enemies
      */
-    public GameController(){
+    public GameController(int nMaxParty){
         nMaxEnemies = new Random().nextInt(8)+1;
+        this.nMaxParty = nMaxParty;
         turnList.addListener(handlerList);
         this.setPhase(new DrawTitlePhase());
-        setPredefinedStats();
     }
 
     /**
      * Initialize a new game with a random number from a specific seed, of enemies
      */
-    public GameController(Random rng){
+    public GameController(Random rng, int nMaxParty){
         nMaxEnemies = rng.nextInt(8)+1;
+        this.nMaxParty = nMaxParty;
         turnList.addListener(handlerList);
-        setPredefinedStats();
-    }
-
-    /**
-     * set predefined characters, weapons and enemies to choose from
-     */
-    public void setPredefinedStats(){
-        createKnightStat(30, 100);
-        createThiefStat(20, 140);
-        createBlackMageStat(25, 130, 30);
-        createEngineerStat(15, 60);
-        createWhiteMageStat(10, 40, 20);
-        createWhiteMageStat(10, 40, 20);
-        createThiefStat(20, 140);
-        createBlackMageStat(25, 130, 30);
-        createWhiteMageStat(10, 40, 20);
-        createThiefStat(20, 140);
-        createBlackMageStat(25, 130, 30);
-
-        createAxe("AXE", 130,40);
-        createKnife("KNIFE", 75,12);
-        createStaff("STAFF1", 664, 21,98);
-        createAxe("AXE", 140, 20);
-        createStaff("STAFF2", 664, 21,98);
-        createSword("SWORD", 123,40);
-        createBow("BOW", 123,67);
-        createStaff("STAFF2", 664, 21,98);
-        createBow("BOW", 123,10);
-
-        createEnemyName("Goblin");
-        createEnemyName("Spider");
-        createEnemyName("Ghost");
-        createEnemyName("Skeleton");
-        createEnemyName("Zombie");
-
-        createEnemyStat(10,130,120,50);
-        createEnemyStat(50,100,100,56);
-        createEnemyStat(187,40,160,23);
-        createEnemyStat(123,90,60,80);
-        createEnemyStat(53,70,190,20);
-        createEnemyStat(90,127,40,40);
     }
 
     /**
@@ -309,43 +271,48 @@ public class GameController {
     public int getnEnemies() { return nEnemies; }
 
     /**
-     * Return the max number of enemies possible for the game
+     * Return the max number of enemies and players possible for the game respectively.
      */
     public int getnMaxEnemies() { return nMaxEnemies; }
+    public int getnMaxParty() { return nMaxParty; }
 
     /**
      * Selects and creates a player from the list of stats available.
      */
-    public IPlayer selectionPlayer(int indexPlayer, String name) throws InvalidTransitionException {
-        String[] player = playersStat.get(indexPlayer);
-        IPlayer partyPlayer = null;
-        switch (Integer.parseInt(player[0])) {
-            case 1: //Knight
-                partyPlayer = new Knights(name, turnsQueue, Integer.parseInt(player[2]), Integer.parseInt(player[3]));
-                break;
-            case 2: //Thief
-                partyPlayer = new Thieves(name, turnsQueue, Integer.parseInt(player[2]), Integer.parseInt(player[3]));
-                break;
-            case 3: //BlackMage
-                partyPlayer = new BlackMages(name, turnsQueue, Integer.parseInt(player[2]), Integer.parseInt(player[3]), Integer.parseInt(player[4]));
-                break;
-            case 4: //WhiteMage
-                partyPlayer = new WhiteMages(name, turnsQueue, Integer.parseInt(player[2]), Integer.parseInt(player[3]), Integer.parseInt(player[4]));
-                break;
-            case 5: //Engineer
-                partyPlayer = new Engineers(name, turnsQueue, Integer.parseInt(player[2]), Integer.parseInt(player[3]));
-                break;
+    public IPlayer selectionPlayer(int indexPlayer, String name) throws InvalidSelectionPlayerException {
+        if(getnParty()<20) {
+            String[] player = playersStat.get(indexPlayer);
+            IPlayer partyPlayer = null;
+            switch (Integer.parseInt(player[0])) {
+                case 1: //Knight
+                    partyPlayer = new Knights(name, turnsQueue, Integer.parseInt(player[2]), Integer.parseInt(player[3]));
+                    break;
+                case 2: //Thief
+                    partyPlayer = new Thieves(name, turnsQueue, Integer.parseInt(player[2]), Integer.parseInt(player[3]));
+                    break;
+                case 3: //BlackMage
+                    partyPlayer = new BlackMages(name, turnsQueue, Integer.parseInt(player[2]), Integer.parseInt(player[3]), Integer.parseInt(player[4]));
+                    break;
+                case 4: //WhiteMage
+                    partyPlayer = new WhiteMages(name, turnsQueue, Integer.parseInt(player[2]), Integer.parseInt(player[3]), Integer.parseInt(player[4]));
+                    break;
+                case 5: //Engineer
+                    partyPlayer = new Engineers(name, turnsQueue, Integer.parseInt(player[2]), Integer.parseInt(player[3]));
+                    break;
+            }
+            if (partyPlayer == null) {
+                throw new InvalidSelectionPlayerException("Incorrect player");
+            }
+            partyPlayer.addListener(handlerPlayer);
+            playersStat.remove(indexPlayer);
+            nPlayers -= 1;
+            nParty += 1;
+            party.add(partyPlayer);
+            party_copy.add(partyPlayer);
+            return partyPlayer;
+        }else{
+            throw new InvalidSelectionPlayerException("maximum number of players reached");
         }
-        if(partyPlayer==null){
-            throw new InvalidTransitionException("Incorrect player");
-        }
-        partyPlayer.addListener(handlerPlayer);
-        playersStat.remove(indexPlayer);
-        nPlayers -= 1;
-        nParty += 1;
-        party.add(partyPlayer);
-        party_copy.add(partyPlayer);
-        return partyPlayer;
     }
 
     /**
@@ -567,6 +534,8 @@ public class GameController {
     public boolean isInPlayerTurnPhase() {return phase.isInPlayerTurnPhase();}
     public boolean isInEnemyTurnPhase() {return phase.isInEnemyTurnPhase();}
     public boolean isInSelectionAttackPhase() {return phase.isInSelectionAttackPhase();}
+    public boolean isInEndPhase(){return phase.isInEndPhase();}
+    public boolean isInDrawTitlePhase(){return phase.isInDrawTitlePhase();}
 
 
     /**
@@ -606,6 +575,12 @@ public class GameController {
     public void removePlayerCopy(IPlayer player) {
         party_copy.remove(player);
     }
+
+    /**
+     * Returns the phase
+     */
+    public Phase getPhase(){return phase;}
+
 
 
 }

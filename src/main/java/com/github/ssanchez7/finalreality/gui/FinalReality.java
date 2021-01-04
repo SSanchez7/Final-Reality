@@ -3,6 +3,7 @@ package com.github.ssanchez7.finalreality.gui;
 import com.github.ssanchez7.finalreality.controller.GameController;
 import com.github.ssanchez7.finalreality.controller.exceptions.InvalidEquipmentException;
 import com.github.ssanchez7.finalreality.controller.exceptions.InvalidMovementException;
+import com.github.ssanchez7.finalreality.controller.exceptions.InvalidSelectionPlayerException;
 import com.github.ssanchez7.finalreality.controller.exceptions.InvalidTransitionException;
 import com.github.ssanchez7.finalreality.model.character.ICharacter;
 import com.github.ssanchez7.finalreality.model.character.player.IPlayer;
@@ -32,7 +33,7 @@ import java.util.List;
  */
 public class FinalReality extends Application {
 
-    private final GameController controller = new GameController();
+    private final GameController controller = new GameController(5);
     private final Group root = new Group();
 
     /**
@@ -52,7 +53,7 @@ public class FinalReality extends Application {
     private List<Label> labelEnemyList = new ArrayList<>();
 
     /**
-     * Groups that holds items for selection player, selection weapon, selection enemiy, battle, and title "scenes" respectively.
+     * Groups that holds items for selection player, selection weapon, selection enemy, battle, and title "scenes" respectively.
      */
     private final Group selectionPlayer = new Group();
     private final Group selectionWeapon = new Group();
@@ -63,7 +64,7 @@ public class FinalReality extends Application {
     /**
      * Buttons, Labels and Text Field that need to be known throughout the class
      */
-    private final TextField name = createTextField(selectionPlayer,80, controller.getnPlayers()*30+40);
+    private final TextField name = new TextField();
     private final Button chooseWeapon = new Button(); //Button in selectionWeapon
     private final Button chooseEnemy = new Button(); //Button in selectionEnemy
     private final Button changeWeapon = new Button(); //Button in turns
@@ -92,7 +93,7 @@ public class FinalReality extends Application {
      */
     private Scene createScene() {
         Scene scene = new Scene(root, 1280, 720);
-
+        setPredefinedStats();
         root.getChildren().add(title);
         Label titleLabel = createLabel(title, 250,100);
         titleLabel.setFont(Font.font("consolas",100));
@@ -147,7 +148,7 @@ public class FinalReality extends Application {
                     (i + 1), item[1], item[2], item[3], ((item[4] == null) ? "" : item[4]));
             button.setText(str);
         }
-        if(controller.getnParty()==5){
+        if(controller.getnParty()==controller.getnMaxParty()){
             for(int i=0; i<controller.getnMaxEnemies(); i++) {
                 controller.selectionEnemy();
             }
@@ -317,6 +318,10 @@ public class FinalReality extends Application {
         choosePlayer.setText("Choose Player");
         Label insertName = createLabel(selectionPlayer,10,controller.getnPlayers()*30+40);
         insertName.setText("Insert Name");
+
+        name.setLayoutX(80);
+        name.setLayoutY(controller.getnPlayers()*30+40);
+        selectionPlayer.getChildren().add(name);
         choosePlayer.setOnAction(event -> {
             chooseAPlayer();
         });
@@ -428,7 +433,7 @@ public class FinalReality extends Application {
             root.getChildren().remove(selectionPlayer);
             root.getChildren().add(selectionWeapon);
             controller.canChooseAWeapon();
-        }catch (InvalidTransitionException e){
+        }catch (InvalidSelectionPlayerException e){
             e.printStackTrace();
         }
     }
@@ -478,24 +483,6 @@ public class FinalReality extends Application {
     }
 
     /**
-     * create a Text Field
-     * @param group:
-     *             group to which it belongs
-     * @param xPos:
-     *            position in the X axis
-     * @param yPos:
-     *            position in the Y axis
-     * @return the text field created.
-     */
-    private TextField createTextField(Group group, int xPos, int yPos) {
-        TextField text = new TextField();
-        text.setLayoutX(xPos);
-        text.setLayoutY(yPos);
-        group.getChildren().add(text);
-        return text;
-    }
-
-    /**
      * create a button
      * @param group:
      *             group to which it belongs
@@ -532,6 +519,46 @@ public class FinalReality extends Application {
         radioButton.setToggleGroup(toggleGroup);
         group.getChildren().add(radioButton);
         return radioButton;
+    }
+
+    /**
+     * set predefined characters, weapons and enemies to choose from
+     */
+    public void setPredefinedStats(){
+        controller.createKnightStat(30, 100);
+        controller.createThiefStat(20, 140);
+        controller.createBlackMageStat(25, 130, 30);
+        controller.createEngineerStat(15, 60);
+        controller.createWhiteMageStat(10, 40, 20);
+        controller.createWhiteMageStat(10, 40, 20);
+        controller.createThiefStat(20, 140);
+        controller.createBlackMageStat(25, 130, 30);
+        controller.createWhiteMageStat(10, 40, 20);
+        controller.createThiefStat(20, 140);
+        controller.createBlackMageStat(25, 130, 30);
+
+        controller.createAxe("AXE", 130,40);
+        controller.createKnife("KNIFE", 75,12);
+        controller.createStaff("STAFF1", 664, 21,98);
+        controller.createAxe("AXE", 140, 20);
+        controller.createStaff("STAFF2", 664, 21,98);
+        controller.createSword("SWORD", 123,40);
+        controller.createBow("BOW", 123,67);
+        controller.createStaff("STAFF2", 664, 21,98);
+        controller.createBow("BOW", 123,10);
+
+        controller.createEnemyName("Goblin");
+        controller.createEnemyName("Spider");
+        controller.createEnemyName("Ghost");
+        controller.createEnemyName("Skeleton");
+        controller.createEnemyName("Zombie");
+
+        controller.createEnemyStat(10,130,120,50);
+        controller.createEnemyStat(50,100,100,56);
+        controller.createEnemyStat(187,40,160,23);
+        controller.createEnemyStat(123,90,60,80);
+        controller.createEnemyStat(53,70,190,20);
+        controller.createEnemyStat(90,127,40,40);
     }
 
 }
